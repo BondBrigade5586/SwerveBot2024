@@ -20,9 +20,11 @@ public class ShuffleboardContent {
                 .withSize(2, 3).withProperties(Map.of("Label position", "LEFT"));
 
         swerveModuleLayout.addNumber("Position (" + modulePositionAbbreviation + ")",
-                () -> module.getRelativePosition());
-        swerveModuleLayout.addNumber("Angular Position (" + modulePositionAbbreviation + ")",
-                () -> module.getAbsolutePosition());
+                () -> module.getRelativeAngle());
+        swerveModuleLayout.addNumber("CAN Angular Position (" + modulePositionAbbreviation + ")",
+                () -> module.getAbsoluteModuleAngle());
+        swerveModuleLayout.addNumber("Encoder Angular Position (" + modulePositionAbbreviation + ")",
+                () -> module.getRelativeAngle());
         swerveModuleLayout.addNumber("Velocity (" + modulePositionAbbreviation + ")",
                 () -> module.getVelocity());
         swerveModuleLayout.addNumber("Drive Current (" + modulePositionAbbreviation + ")", 

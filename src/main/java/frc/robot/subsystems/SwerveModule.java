@@ -51,9 +51,7 @@ public class SwerveModule {
 
     /* Angle Motor Config */
     angleMotor = new CANSparkMax(moduleConstants.angleMotorID, CANSparkMax.MotorType.kBrushless);
-    angleMotor.getEncoder().getVelocity();
     integratedAngleEncoder = angleMotor.getEncoder();
-    integratedAngleEncoder.setPositionConversionFactor(360.0);
     angleController = angleMotor.getPIDController();
     configAngleMotor();
 
@@ -80,8 +78,8 @@ public class SwerveModule {
   }
 
   private void resetToAbsolute() {
-    double absolutePosition = getCanCoder().getDegrees() - angleOffset.getDegrees();
-    integratedAngleEncoder.setPosition(absolutePosition);
+    double absolutePositionDegrees = getAbsoluteModuleAngle() - angleOffset.getDegrees();
+    integratedAngleEncoder.setPosition(absolutePositionDegrees);
   }
 
   private void configAngleEncoder() {
@@ -147,11 +145,11 @@ public class SwerveModule {
     lastAngle = angle;
   }
 
-  public double getRelativePosition() {
+  public double getRelativeAngle() {
     return integratedAngleEncoder.getPosition();
   }
 
-  public double getAbsolutePosition() {
+  public double getAbsoluteModuleAngle() {
     return angleEncoder.getAbsolutePosition().getValueAsDouble() * 360.;
   }
 
@@ -163,8 +161,8 @@ public class SwerveModule {
     return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
   }
 
-  public Rotation2d getCanCoder() {
-    return Rotation2d.fromDegrees(getAbsolutePosition());
+  public Rotation2d getCANcoderAbsoluteAngle() {
+    return Rotation2d.fromDegrees(getAbsoluteModuleAngle());
   }
 
   public SwerveModuleState getState() {
@@ -174,7 +172,7 @@ public class SwerveModule {
   // returns the current position as SwerveModulePosition
   public SwerveModulePosition getPosition() {
     return new SwerveModulePosition(
-      driveEncoder.getPosition(), new Rotation2d(driveEncoder.getPosition())
+      driveEncoder.getPosition(), Rotation2d.fromDegrees(integratedAngleEncoder.getPosition())
     );
   }
 

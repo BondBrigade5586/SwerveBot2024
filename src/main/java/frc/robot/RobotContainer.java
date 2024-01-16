@@ -9,8 +9,9 @@ package frc.robot;
 
 import java.nio.channels.SelectableChannel;
 
-// import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -30,7 +31,7 @@ import frc.robot.commands.TeleopSwerve;;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> autoChooser;
 
   /* Controllers */
   private final Joystick driver = new Joystick(0);
@@ -63,8 +64,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    // SmartDashboard.putData("Auto Mode", autoChooser);
+    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
   /**
@@ -84,7 +85,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return autoChooser.getSelected();
-    return Commands.none();
+    return autoChooser.getSelected();
   }
 }
