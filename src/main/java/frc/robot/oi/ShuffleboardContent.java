@@ -33,8 +33,8 @@ public class ShuffleboardContent {
                 () -> module.getTurnMotorCurrent());
         swerveModuleLayout.addNumber("Offset (" + modulePositionAbbreviation + ")", 
                 () -> module.getOffset());
-        swerveModuleLayout.addString("Magnetic Field (" + modulePositionAbbreviation + ")", 
-                () -> module.getMagnetFieldStrength().toString());
+        // swerveModuleLayout.addString("Magnetic Field (" + modulePositionAbbreviation + ")", 
+        //         () -> module.getMagnetFieldStrength().toString());
 
         // FONDY FIRE code example
         // int m_moduleNumber = m_sm.m_locationIndex;

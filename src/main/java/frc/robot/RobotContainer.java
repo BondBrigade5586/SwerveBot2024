@@ -11,6 +11,9 @@ import java.nio.channels.SelectableChannel;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -47,6 +50,9 @@ public class RobotContainer {
       new JoystickButton(driver, XboxController.Button.kY.value);
   private final JoystickButton robotCentric =
       new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+      // TESTING
+      private final JoystickButton updateOdometryPose = 
+      new JoystickButton(driver, XboxController.Button.kB.value);
 
   /* Subsystems */
   private final Swerve swerveSubsystem = new Swerve();
@@ -77,6 +83,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
+
+    updateOdometryPose.onTrue(new InstantCommand(() -> {
+      swerveSubsystem.updateOdometryPose();
+    }));
   }
 
   /**

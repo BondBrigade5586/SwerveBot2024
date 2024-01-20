@@ -11,6 +11,9 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -19,20 +22,39 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.oi.ShuffleboardContent;
 
 public class Swerve extends SubsystemBase {
   private final Pigeon2 gyro;
 
-  private SwerveDriveOdometry swerveOdometry;
+  // TESTING
+  // previously swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), swerveModulePositions);
+  private SwerveDrivePoseEstimator swerveOdometry;
   private SwerveModule[] swerveModules;
 
   private Field2d field;
+
+  /**
+   * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
+   * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
+   */
+  private static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+
+  /**
+   * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
+   * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
+   */
+  private static final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(5));
 
   public Swerve() {
     gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -54,7 +76,14 @@ public class Swerve extends SubsystemBase {
       swerveModules[3].getPosition()
     };
 
-    swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), swerveModulePositions);
+    swerveOdometry = new SwerveDrivePoseEstimator(
+      Constants.Swerve.swerveKinematics,
+      getYaw(),
+      swerveModulePositions,
+      new Pose2d(),
+      stateStdDevs,
+      visionMeasurementStdDevs
+    );
 
     AutoBuilder.configureHolonomic(
       this::getPose, // Robot pose supplier
@@ -65,9 +94,9 @@ public class Swerve extends SubsystemBase {
           // PIDConstants(5, 0, 0) is a sensible default; maybe we shouldn't be using the teleop values in autonomous
           new PIDConstants(5, 0, 0), // Translation PID constants
           new PIDConstants(5, 0, 0), // Rotation PID constants
-          4.5, // Max module speed, in m/s
+          1, // Max module speed, in m/s
           0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-          new ReplanningConfig(false, false) // Default path replanning config. See the API for the options here
+          new ReplanningConfig(true, false) // Default path replanning config. See the API for the options here
       ),
       () -> {
         // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -101,6 +130,29 @@ public class Swerve extends SubsystemBase {
     setModuleStates(targetStates);
   }
 
+  public void updateOdometryPose() {
+    boolean hasTargets = LimelightHelpers.getTV("limelight");
+    if(!hasTargets) return;
+
+    Pose2d pose = LimelightHelpers.getBotPose2d("limelight");
+    Translation2d poseTranslation = pose.getTranslation();
+
+    // Offset the pose to the center of the field because the limelight returns (0, 0)
+    // as the center instead of (16.45, 8.09). This should probably be fixed in
+    // LimelightHelpers instead, but this is easiest for now.
+    Pose2d fixedPose = new Pose2d(new Translation2d(
+      16.4592 / 2 + poseTranslation.getX(),
+      8.09625 / 2 + poseTranslation.getY()
+    ), pose.getRotation());
+
+    double[] botpose = LimelightHelpers.getBotPose("limelight");
+    addVisionMeasurement(fixedPose, botpose[6]);
+  }
+
+  public void addVisionMeasurement(Pose2d pose, double timestamp) {
+    swerveOdometry.addVisionMeasurement(pose, Timer.getFPGATimestamp() - (timestamp / 1000.0));
+  }
+
   /**
    * Updates the swerve drivetrain with the specified values.
    * @param velocity
@@ -132,7 +184,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return swerveOdometry.getPoseMeters();
+    return swerveOdometry.getEstimatedPosition();
   }
 
   /**
@@ -182,7 +234,10 @@ public class Swerve extends SubsystemBase {
       swerveModules[2].getPosition(), 
       swerveModules[3].getPosition()
     });
+
     field.setRobotPose(getPose());
+
+    updateOdometryPose();
 
     for (SwerveModule mod : swerveModules) {
       SmartDashboard.putNumber(

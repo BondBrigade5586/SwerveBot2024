@@ -632,6 +632,11 @@ public class LimelightHelpers {
 
     }
 
+    /**
+     * Gets if there are any targets currently visible.
+     * @param limelightName
+     * @return
+     */
     public static boolean getTV(String limelightName) {
         return 1.0 == getLimelightNTDouble(limelightName, "tv");
     }
