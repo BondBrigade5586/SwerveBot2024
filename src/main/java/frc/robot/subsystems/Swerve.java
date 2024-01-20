@@ -4,7 +4,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -17,9 +16,9 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
@@ -32,7 +31,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
-import frc.robot.oi.ShuffleboardContent;
 
 public class Swerve extends SubsystemBase {
   private final Pigeon2 gyro;
@@ -54,7 +52,7 @@ public class Swerve extends SubsystemBase {
    * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
    * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
    */
-  private static final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(5));
+  private static final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(15));
 
   public Swerve() {
     gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -137,6 +135,10 @@ public class Swerve extends SubsystemBase {
     Pose2d pose = LimelightHelpers.getBotPose2d("limelight");
     Translation2d poseTranslation = pose.getTranslation();
 
+    // Get the position of the primary tag. If it's further than 2.5 meters away, discard the data.
+    double distance = LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getTranslation().getDistance(new Translation3d());
+    if(distance > 2.5) return;
+
     // Offset the pose to the center of the field because the limelight returns (0, 0)
     // as the center instead of (16.45, 8.09). This should probably be fixed in
     // LimelightHelpers instead, but this is easiest for now.
@@ -146,6 +148,8 @@ public class Swerve extends SubsystemBase {
     ), pose.getRotation());
 
     double[] botpose = LimelightHelpers.getBotPose("limelight");
+    if(botpose.length == 0) return;
+
     addVisionMeasurement(fixedPose, botpose[6]);
   }
 
