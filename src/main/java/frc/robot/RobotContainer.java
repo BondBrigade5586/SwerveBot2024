@@ -2,8 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-//other example repos: 4607, 3457
 //this code is based on team frc3512 SwerveBot-2022
+//other example repos: 4607, 3457
 
 package frc.robot;
 
@@ -40,6 +40,10 @@ public class RobotContainer {
   private final Joystick driver = new Joystick(0);
   private final XboxController operator = new XboxController(1);
 
+  public XboxController GetOperatorController() {
+    return operator;
+  }
+
   /* Drive Controls */
   private static final int translationAxis = XboxController.Axis.kLeftY.value;
   private static final int strafeAxis = XboxController.Axis.kLeftX.value;
@@ -51,11 +55,12 @@ public class RobotContainer {
   private final JoystickButton robotCentric =
       new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
       // TESTING
-      private final JoystickButton updateOdometryPose = 
-      new JoystickButton(driver, XboxController.Button.kB.value);
+      // private final JoystickButton updateOdometryPose = 
+      // new JoystickButton(driver, XboxController.Button.kB.value);
 
   /* Subsystems */
   private final Swerve swerveSubsystem = new Swerve();
+  public final Shooter shooterSubsystem = new Shooter();
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
@@ -84,9 +89,9 @@ public class RobotContainer {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
-    updateOdometryPose.onTrue(new InstantCommand(() -> {
-      swerveSubsystem.updateOdometryPose();
-    }));
+    // updateOdometryPose.onTrue(new InstantCommand(() -> {
+    //   swerveSubsystem.updateOdometryPose();
+    // }));
   }
 
   /**

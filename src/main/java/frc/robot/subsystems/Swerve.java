@@ -1,9 +1,9 @@
-//FIX ME --- MODULE POSITION!!!!!!!!!
 
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -19,25 +19,29 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
+import com.kauailabs.navx.frc.AHRS;
 
 public class Swerve extends SubsystemBase {
-  private final Pigeon2 gyro;
-
-  // TESTING
-  // previously swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), swerveModulePositions);
-  private SwerveDrivePoseEstimator swerveOdometry;
+  // private final Pigeon2 gyro;
+  private final AHRS gyro;
+  
+  // TESTING - remove estimator?
+  //previously SwerveDriveOdometry swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), swerveModulePositions);
+  // private SwerveDrivePoseEstimator swerveOdometry;
+  private SwerveDriveOdometry swerveOdometry;
   private SwerveModule[] swerveModules;
 
   private Field2d field;
@@ -46,17 +50,18 @@ public class Swerve extends SubsystemBase {
    * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
    * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
    */
-  private static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+  // private static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
 
   /**
    * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
    * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
    */
-  private static final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(15));
+  // private static final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(15));
 
   public Swerve() {
-    gyro = new Pigeon2(Constants.Swerve.pigeonID);
-    gyro.getConfigurator().apply(new Pigeon2Configuration());
+    // gyro = new Pigeon2(Constants.Swerve.pigeonID);
+    gyro = new AHRS(SPI.Port.kMXP);
+    // gyro.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
     
     swerveModules =
@@ -74,47 +79,52 @@ public class Swerve extends SubsystemBase {
       swerveModules[3].getPosition()
     };
 
-    swerveOdometry = new SwerveDrivePoseEstimator(
-      Constants.Swerve.swerveKinematics,
-      getYaw(),
-      swerveModulePositions,
-      new Pose2d(),
-      stateStdDevs,
-      visionMeasurementStdDevs
-    );
+    swerveOdometry = new SwerveDriveOdometry(
+      Constants.Swerve.swerveKinematics, 
+      getYaw(), 
+      swerveModulePositions);
+    // TESTING - remove estimator?
+    // swerveOdometry = new SwerveDrivePoseEstimator(
+    //   Constants.Swerve.swerveKinematics,
+    //   getYaw(),
+    //   swerveModulePositions,
+    //   new Pose2d(),
+    //   stateStdDevs,
+    //   visionMeasurementStdDevs
+    // );
 
-    AutoBuilder.configureHolonomic(
-      this::getPose, // Robot pose supplier
-      this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-      this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-      this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-          // PIDConstants(5, 0, 0) is a sensible default; maybe we shouldn't be using the teleop values in autonomous
-          new PIDConstants(5, 0, 0), // Translation PID constants
-          new PIDConstants(5, 0, 0), // Rotation PID constants
-          1, // Max module speed, in m/s
-          0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-          new ReplanningConfig(true, false) // Default path replanning config. See the API for the options here
-      ),
-      () -> {
-        // Boolean supplier that controls when the path will be mirrored for the red alliance
-        // This will flip the path being followed to the red side of the field.
-        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+  //   AutoBuilder.configureHolonomic(
+  //     this::getPose, // Robot pose supplier
+  //     this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
+  //     this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+  //     this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+  //     new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+  //         // PIDConstants(5, 0, 0) is a sensible default; maybe we shouldn't be using the teleop values in autonomous
+  //         new PIDConstants(5, 0, 0), // Translation PID constants
+  //         new PIDConstants(5, 0, 0), // Rotation PID constants
+  //         1, // Max module speed, in m/s
+  //         0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+  //         new ReplanningConfig(true, false) // Default path replanning config. See the API for the options here
+  //     ),
+  //     () -> {
+  //       // Boolean supplier that controls when the path will be mirrored for the red alliance
+  //       // This will flip the path being followed to the red side of the field.
+  //       // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-        var alliance = DriverStation.getAlliance();
-        if (alliance.isPresent()) {
-            return alliance.get() == DriverStation.Alliance.Red;
-        }
-        return false;
-      },
-      this // Reference to this subsystem to set requirements
-    );
+  //       var alliance = DriverStation.getAlliance();
+  //       if (alliance.isPresent()) {
+  //           return alliance.get() == DriverStation.Alliance.Red;
+  //       }
+  //       return false;
+  //     },
+  //     this // Reference to this subsystem to set requirements
+  //   );
 
-    field = new Field2d();
-    SmartDashboard.putData("Field", field);
+  //   field = new Field2d();
+  //   SmartDashboard.putData("Field", field);
 
-    // Set up custom logging to add the current path to a field 2d widget
-    PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
+  //   // Set up custom logging to add the current path to a field 2d widget
+  //   PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -128,34 +138,34 @@ public class Swerve extends SubsystemBase {
     setModuleStates(targetStates);
   }
 
-  public void updateOdometryPose() {
-    boolean hasTargets = LimelightHelpers.getTV("limelight");
-    if(!hasTargets) return;
+  // public void updateOdometryPose() {
+  //   boolean hasTargets = LimelightHelpers.getTV("limelight");
+  //   if(!hasTargets) return;
 
-    Pose2d pose = LimelightHelpers.getBotPose2d("limelight");
-    Translation2d poseTranslation = pose.getTranslation();
+  //   Pose2d pose = LimelightHelpers.getBotPose2d("limelight");
+  //   Translation2d poseTranslation = pose.getTranslation();
 
-    // Get the position of the primary tag. If it's further than 2.5 meters away, discard the data.
-    double distance = LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getTranslation().getDistance(new Translation3d());
-    if(distance > 2.5) return;
+  //   // Get the position of the primary tag. If it's further than 2.5 meters away, discard the data.
+  //   double distance = LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getTranslation().getDistance(new Translation3d());
+  //   if(distance > 2.5) return;
 
-    // Offset the pose to the center of the field because the limelight returns (0, 0)
-    // as the center instead of (16.45, 8.09). This should probably be fixed in
-    // LimelightHelpers instead, but this is easiest for now.
-    Pose2d fixedPose = new Pose2d(new Translation2d(
-      16.4592 / 2 + poseTranslation.getX(),
-      8.09625 / 2 + poseTranslation.getY()
-    ), pose.getRotation());
+  //   // Offset the pose to the center of the field because the limelight returns (0, 0)
+  //   // as the center instead of (16.45, 8.09). This should probably be fixed in
+  //   // LimelightHelpers instead, but this is easiest for now.
+  //   Pose2d fixedPose = new Pose2d(new Translation2d(
+  //     16.4592 / 2 + poseTranslation.getX(),
+  //     8.09625 / 2 + poseTranslation.getY()
+  //   ), pose.getRotation());
 
-    double[] botpose = LimelightHelpers.getBotPose("limelight");
-    if(botpose.length == 0) return;
+  //   double[] botpose = LimelightHelpers.getBotPose("limelight");
+  //   if(botpose.length == 0) return;
 
-    addVisionMeasurement(fixedPose, botpose[6]);
-  }
+  //   addVisionMeasurement(fixedPose, botpose[6]);
+  // }
 
-  public void addVisionMeasurement(Pose2d pose, double timestamp) {
-    swerveOdometry.addVisionMeasurement(pose, Timer.getFPGATimestamp() - (timestamp / 1000.0));
-  }
+  // public void addVisionMeasurement(Pose2d pose, double timestamp) {
+  //   swerveOdometry.addVisionMeasurement(pose, Timer.getFPGATimestamp() - (timestamp / 1000.0));
+  // }
 
   /**
    * Updates the swerve drivetrain with the specified values.
@@ -188,7 +198,9 @@ public class Swerve extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    return swerveOdometry.getEstimatedPosition();
+    return swerveOdometry.getPoseMeters();
+    // TESTING - remove estimator?
+    // return swerveOdometry.getEstimatedPosition();
   }
 
   /**
@@ -216,7 +228,10 @@ public class Swerve extends SubsystemBase {
    * Resets the yaw value of the gyroscope to zero. 
    */
   public void zeroGyro() {
-    gyro.setYaw(0);
+    // gyro.setYaw(0);
+    gyro.zeroYaw();
+    // TESTING - POSSIBLE SOLUTION??
+    // gyro.reset();
   }
 
   /**
@@ -225,9 +240,21 @@ public class Swerve extends SubsystemBase {
    * @return
    */
   public Rotation2d getYaw() {
-    return (Constants.Swerve.invertGyro)
-        ? Rotation2d.fromDegrees(360 - gyro.getYaw().getValueAsDouble())
-        : Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
+    // code for the pigeon 2.0
+    // return (Constants.Swerve.invertGyro)
+    //     ? Rotation2d.fromDegrees(360 - gyro.getYaw().getValueAsDouble())
+    //     : Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
+    // Pigeon2 testGyro = new Pigeon2(12);
+    // testGyro.getYaw().getValueAsDouble();
+    Rotation2d testYaw = (Constants.Swerve.invertGyro)
+        ? Rotation2d.fromDegrees(180 - ((double)gyro.getYaw()))
+        : Rotation2d.fromDegrees(((double)gyro.getYaw()) + 180);
+
+    // TESTING printouts
+    System.out.println("Is inverted: " + (Constants.Swerve.invertGyro));
+    System.out.println("Tranformed Yaw: " + testYaw);
+    System.out.println("Yaw: " + gyro.getYaw());
+    return testYaw;
   }
 
   @Override
@@ -241,7 +268,7 @@ public class Swerve extends SubsystemBase {
 
     field.setRobotPose(getPose());
 
-    updateOdometryPose();
+    // updateOdometryPose();
 
     for (SwerveModule mod : swerveModules) {
       SmartDashboard.putNumber(
