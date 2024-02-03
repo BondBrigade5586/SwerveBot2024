@@ -9,7 +9,7 @@ package frc.robot;
 
 import java.nio.channels.SelectableChannel;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -59,7 +59,7 @@ public class RobotContainer {
       // new JoystickButton(driver, XboxController.Button.kB.value);
 
   /* Subsystems */
-  private final Swerve swerveSubsystem = new Swerve();
+  public final Swerve swerveSubsystem = new Swerve();
   public final Shooter shooterSubsystem = new Shooter();
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
@@ -75,8 +75,9 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    SmartDashboard.putData("Auto Mode", autoChooser);
+    // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    autoChooser = new SendableChooser<>();
+    // SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
   /**

@@ -1,14 +1,12 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.PathPlannerLogging;
-import com.pathplanner.lib.util.ReplanningConfig;
+// import com.pathplanner.lib.auto.AutoBuilder;
+// import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+// import com.pathplanner.lib.util.PIDConstants;
+// import com.pathplanner.lib.util.PathPlannerLogging;
+// import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -35,7 +33,6 @@ import frc.robot.Constants;
 import com.kauailabs.navx.frc.AHRS;
 
 public class Swerve extends SubsystemBase {
-  // private final Pigeon2 gyro;
   private final AHRS gyro;
   
   // TESTING - remove estimator?
@@ -44,7 +41,7 @@ public class Swerve extends SubsystemBase {
   private SwerveDriveOdometry swerveOdometry;
   private SwerveModule[] swerveModules;
 
-  private Field2d field;
+  // private Field2d field;
 
   /**
    * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
@@ -59,9 +56,7 @@ public class Swerve extends SubsystemBase {
   // private static final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(15));
 
   public Swerve() {
-    // gyro = new Pigeon2(Constants.Swerve.pigeonID);
     gyro = new AHRS(SPI.Port.kMXP);
-    // gyro.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
     
     swerveModules =
@@ -228,10 +223,10 @@ public class Swerve extends SubsystemBase {
    * Resets the yaw value of the gyroscope to zero. 
    */
   public void zeroGyro() {
-    // gyro.setYaw(0);
+    //NavX Code
     gyro.zeroYaw();
-    // TESTING - POSSIBLE SOLUTION??
-    // gyro.reset();
+    // gyro.reset(); //TESTING - POSSIBLE SOLUTION??
+    System.out.println("ZERO GYRO");
   }
 
   /**
@@ -240,20 +235,17 @@ public class Swerve extends SubsystemBase {
    * @return
    */
   public Rotation2d getYaw() {
-    // code for the pigeon 2.0
-    // return (Constants.Swerve.invertGyro)
-    //     ? Rotation2d.fromDegrees(360 - gyro.getYaw().getValueAsDouble())
-    //     : Rotation2d.fromDegrees(gyro.getYaw().getValueAsDouble());
-    // Pigeon2 testGyro = new Pigeon2(12);
-    // testGyro.getYaw().getValueAsDouble();
+    
+    //NavX Code
     Rotation2d testYaw = (Constants.Swerve.invertGyro)
         ? Rotation2d.fromDegrees(180 - ((double)gyro.getYaw()))
         : Rotation2d.fromDegrees(((double)gyro.getYaw()) + 180);
 
-    // TESTING printouts
-    System.out.println("Is inverted: " + (Constants.Swerve.invertGyro));
-    System.out.println("Tranformed Yaw: " + testYaw);
-    System.out.println("Yaw: " + gyro.getYaw());
+
+    // // TESTING printouts
+    // System.out.println("Is inverted: " + (Constants.Swerve.invertGyro));
+    // System.out.println("Tranformed Yaw: " + testYaw);
+    // System.out.println("Yaw: " + gyro.getYaw());
     return testYaw;
   }
 
@@ -266,17 +258,17 @@ public class Swerve extends SubsystemBase {
       swerveModules[3].getPosition()
     });
 
-    field.setRobotPose(getPose());
+    // field.setRobotPose(getPose());
 
     // updateOdometryPose();
 
-    for (SwerveModule mod : swerveModules) {
-      SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Cancoder", mod.getCANcoderAbsoluteAngle().getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-    }
+    // for (SwerveModule mod : swerveModules) {
+    //   SmartDashboard.putNumber(
+    //       "Mod " + mod.moduleNumber + " Cancoder", mod.getCANcoderAbsoluteAngle().getDegrees());
+    //   SmartDashboard.putNumber(
+    //       "Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
+    //   SmartDashboard.putNumber(
+    //       "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
+    // }
   }
 }

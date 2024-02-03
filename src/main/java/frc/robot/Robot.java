@@ -63,7 +63,9 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    // robotContainer.swerveSubsystem.zeroGyro();
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -82,6 +84,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    System.out.println("TELEOPINIT");
+    robotContainer.swerveSubsystem.zeroGyro();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -94,6 +98,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+
 
     // intake controls
     double inSpeed = robotContainer.GetOperatorController().getRightTriggerAxis();
