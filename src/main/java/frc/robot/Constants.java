@@ -148,4 +148,19 @@ public final class Constants {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
+
+  public static final class Shooter {
+    // PID coefficients
+    public static final double kP_shooter = 0.1; 
+    public static final double kI_shooter = 1e-4;
+    public static final double kD_shooter = 1; 
+    public static final double kIz_shooter = 0; 
+    public static final double kFF_shooter = 0;
+
+    public static final double kMaxOutput = 1; 
+    public static final double kMinOutput = -1;
+
+    public static final double onVelocity = 3800; 
+    public static final double idleVelocity = onVelocity / 2;
+  }
 }

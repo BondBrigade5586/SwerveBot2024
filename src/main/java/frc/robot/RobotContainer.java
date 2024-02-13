@@ -38,9 +38,9 @@ public class RobotContainer {
 
   /* Controllers */
   private final Joystick driver = new Joystick(0);
-  private final XboxController operator = new XboxController(1);
+  private final Joystick operator = new Joystick(1);
 
-  public XboxController GetOperatorController() {
+  public Joystick GetOperatorController() {
     return operator;
   }
 
@@ -48,6 +48,9 @@ public class RobotContainer {
   private static final int translationAxis = XboxController.Axis.kLeftY.value;
   private static final int strafeAxis = XboxController.Axis.kLeftX.value;
   private static final int rotationAxis = XboxController.Axis.kRightX.value;
+
+  /* Operator Controls */
+  private static final int shooterOn = XboxController.Button.kA.value;
 
   /* Driver Buttons */
   private final JoystickButton zeroGyro =
