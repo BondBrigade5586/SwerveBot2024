@@ -24,7 +24,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
+import frc.robot.commands.TeleopIntake;
+import frc.robot.commands.TeleopShooter;
 import frc.robot.commands.TeleopSwerve;;
 
 /**
@@ -49,31 +52,35 @@ public class RobotContainer {
   private static final int strafeAxis = XboxController.Axis.kLeftX.value;
   private static final int rotationAxis = XboxController.Axis.kRightX.value;
 
-  /* Operator Controls */
-  private static final int shooterOn = XboxController.Button.kA.value;
-
   /* Driver Buttons */
   private final JoystickButton zeroGyro =
       new JoystickButton(driver, XboxController.Button.kY.value);
   private final JoystickButton robotCentric =
       new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-      // TESTING
-      // private final JoystickButton updateOdometryPose = 
-      // new JoystickButton(driver, XboxController.Button.kB.value);
+  // TESTING
+  // private final JoystickButton updateOdometryPose = 
+  // new JoystickButton(driver, XboxController.Button.kB.value);  
 
   /* Subsystems */
   public final Swerve swerveSubsystem = new Swerve();
   public final Shooter shooterSubsystem = new Shooter();
+  public final Arm armSubsystem = new Arm();
+  public final Intake intakeSubsystem = new Intake();
 
   /** The container for the robot. Contains subsystems, IO devices, and commands. */
   public RobotContainer() {
     swerveSubsystem.setDefaultCommand(
         new TeleopSwerve(
             swerveSubsystem,
+            driver,
             () -> -driver.getRawAxis(translationAxis),
             () -> -driver.getRawAxis(strafeAxis),
             () -> -driver.getRawAxis(rotationAxis),
             () -> !robotCentric.getAsBoolean()));
+
+    // shooterSubsystem.setDefaultCommand(
+    //   new TeleopShooter(shooterSubsystem, operator)
+    // );
 
     // Configure the button bindings
     configureButtonBindings();

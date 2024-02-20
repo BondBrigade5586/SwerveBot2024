@@ -7,6 +7,8 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -14,6 +16,8 @@ import frc.robot.subsystems.Swerve;
 
 public class TeleopSwerve extends CommandBase {
   private Swerve swerveSubsystem;
+
+  private Joystick driver;
   /**
    * A supplier for X velocity values.
    * When constructing this command, we pass a lambda expression to return the current X velocity. This supplier provides that.
@@ -50,6 +54,7 @@ public class TeleopSwerve extends CommandBase {
 
   public TeleopSwerve(
       Swerve swerveSubsystem,
+      Joystick driver,
       DoubleSupplier xVelocitySupplier,
       DoubleSupplier yVelocitySupplier,
       DoubleSupplier rotationSupplier,
@@ -57,6 +62,7 @@ public class TeleopSwerve extends CommandBase {
     this.swerveSubsystem = swerveSubsystem;
     addRequirements(swerveSubsystem);
 
+    this.driver = driver;
     this.xVelocitySupplier = xVelocitySupplier;
     this.yVelocitySupplier = yVelocitySupplier;
     this.rotationSupplier = rotationSupplier;
@@ -70,12 +76,27 @@ public class TeleopSwerve extends CommandBase {
     double yVelocity = yVelocityLimiter.calculate(MathUtil.applyDeadband(yVelocitySupplier.getAsDouble(), Constants.Swerve.stickDeadband));
     double rotationVal = rotationLimiter.calculate(MathUtil.applyDeadband(rotationSupplier.getAsDouble(), Constants.Swerve.stickDeadband));
 
-    /* Drive */
-    swerveSubsystem.drive(
-        new Translation2d(xVelocity, yVelocity).times(Constants.Swerve.maxSpeed),
-        rotationVal * Constants.Swerve.maxAngularVelocity,
-        // fieldRelativeSupplier.getAsBoolean(),
-        true,
+    //Turtle-mode controls
+    double rightTrigger = driver.getRawAxis(XboxController.Axis.kRightTrigger.value);
+    double leftTrigger = driver.getRawAxis(XboxController.Axis.kLeftTrigger.value);
+
+    if ((rightTrigger > Constants.Swerve.triggerDeadband) || 
+        (leftTrigger > Constants.Swerve.triggerDeadband)) {
+      //Slow drive
+      swerveSubsystem.drive(
+        new Translation2d(xVelocity, yVelocity).times(Constants.Swerve.slowSpeed),
+        rotationVal * Constants.Swerve.slowAngularVelocity,
+        // fieldRelativeSuppjlier.getAsBoolean(),
+        Constants.Swerve.fieldRelative,
         false);
+    } else {
+      /* Full-speed drive */
+      swerveSubsystem.drive(
+          new Translation2d(xVelocity, yVelocity).times(Constants.Swerve.maxSpeed),
+          rotationVal * Constants.Swerve.maxAngularVelocity,
+          // fieldRelativeSuppjlier.getAsBoolean(),
+          Constants.Swerve.fieldRelative,
+          false);
+    }
   }
 }

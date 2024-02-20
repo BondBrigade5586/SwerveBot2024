@@ -9,7 +9,7 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-    private CANSparkMax intakeMotor;
+    // private CANSparkMax intakeMotor;
     private CANSparkMax topShooterMotor;
     private CANSparkMax bottomShooterMotor;
 
@@ -21,9 +21,12 @@ public class Shooter extends SubsystemBase {
     private SparkPIDController bottomShooterPID;
 
     public Shooter() {
-        intakeMotor = new CANSparkMax(51, MotorType.kBrushless);
+        // intakeMotor = new CANSparkMax(51, MotorType.kBrushless);
         topShooterMotor = new CANSparkMax(61, MotorType.kBrushless);
         bottomShooterMotor = new CANSparkMax(62, MotorType.kBrushless);    
+
+        topShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        bottomShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         
         /**
          * In order to use PID functionality for a controller, a SparkPIDController object
@@ -49,13 +52,13 @@ public class Shooter extends SubsystemBase {
         bottomShooterPID.setOutputRange(Constants.Shooter.kMinOutput, Constants.Shooter.kMaxOutput);
     }
 
-    /**
-     * Set intake speed to specified power percentage
-     * @param speed
-     */
-    public void SetIntakeMotorSpeed (double speed) {
-        intakeMotor.set(speed);
-    }
+    // /**
+    //  * Set intake speed to specified power percentage
+    //  * @param speed
+    //  */
+    // public void SetIntakeMotorSpeed (double speed) {
+    //     intakeMotor.set(speed);
+    // }
 
     /**
      * Set top intake speed to specified power percentage

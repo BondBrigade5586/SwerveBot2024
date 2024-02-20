@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    System.out.println("TELEOPINIT");
+    // System.out.println("TELEOPINIT");
     robotContainer.swerveSubsystem.zeroGyro();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -99,28 +99,93 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+    //////////////////////// TEST HARNESS CODE ///////////////////////////////////
+    /////////////////////// Without sensor ///////////////////////////////////////
 
     // intake controls
-    double inSpeed = robotContainer.GetOperatorController().getRightTriggerAxis();
-    double outSpeed = robotContainer.GetOperatorController().getLeftTriggerAxis();
-    if (inSpeed > 0.07) {
-      robotContainer.shooterSubsystem.SetIntakeMotorSpeed(inSpeed);
-    } else if (outSpeed > 0.07) {
-      robotContainer.shooterSubsystem.SetIntakeMotorSpeed(-outSpeed);
+    double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
+    double outSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftTrigger.value);
+    if (inSpeed > Constants.Intake.triggerDeadband) {
+      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.2);
+      // robotContainer.intakeSubsystem.IntakeIn();
+    } else if (outSpeed > Constants.Intake.triggerDeadband) {
+      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(-outSpeed * 0.2);
+      // robotContainer.intakeSubsystem.IntakeOut();
     } else {
-      robotContainer.shooterSubsystem.SetIntakeMotorSpeed(0);
+      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(0);
+      // robotContainer.intakeSubsystem.IntakeOff();
     }
 
+    // TESTING TELEOP SHOOTER TRIGGER
     // shooter controls
-    double shooterSpeed = robotContainer.GetOperatorController().getRightY();
-    if (Math.abs(shooterSpeed) > 0.07) {
-      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(shooterSpeed);
-      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(shooterSpeed);
+    boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
+    boolean reverseShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kRightBumper.value);
+    // double shooterSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightY.value);
+    if (shooterOn && !reverseShooter) {
+      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(1.0);
+      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(1.0);
+      // robotContainer.shooterSubsystem.ShooterOn();
+    
+    } else if(shooterOn && reverseShooter) {
+      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(-0.3);
+      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(-0.3);
     } else {
-      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0);
+      // robotContainer.shooterSubsystem.ShooterOff();
       robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(0);
+      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0);
     }
 
+    // ARM control
+    double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
+    if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
+      // set arm motor to joystick speed
+      robotContainer.armSubsystem.SetArmSpeed(armSpeed);
+    } else {
+      // arm motor not moving!
+      robotContainer.armSubsystem.SetArmSpeed(0);
+    }
+    
+    //////////////////////// TEST HARNESS CODE ///////////////////////////////////
+    /////////////////////// With sensor //////////////////////////////////////////
+    // intake controls
+    // double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
+    // double outSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftTrigger.value);
+
+    // //Shooter controls
+    // boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
+
+    // // ARM control
+    // double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
+
+    // //Intake logic
+    // if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) ||
+    //       (shooterOn && inSpeed > Constants.Intake.triggerDeadband)
+    // ) {
+    //   // robotContainer.shooterSubsystem.SetIntakeMotorSpeed(inSpeed);
+    //   robotContainer.intakeSubsystem.IntakeIn();
+    // } else if (outSpeed > Constants.Intake.triggerDeadband) {
+    //   // robotContainer.shooterSubsystem.SetIntakeMotorSpeed(-outSpeed);
+    //   robotContainer.intakeSubsystem.IntakeOut();
+    // } else {
+    //   // robotContainer.shooterSubsystem.SetIntakeMotorSpeed(0);
+    //   robotContainer.intakeSubsystem.IntakeOff();
+    // }
+
+    // Shooter logic
+    // if (shooterOn) {
+    //   robotContainer.shooterSubsystem.ShooterOn();
+    // } else {
+    //   robotContainer.shooterSubsystem.ShooterOff();
+    // }
+
+    // // Arm logic
+    // if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
+    //   // set arm motor to joystick speed
+    //   robotContainer.armSubsystem.SetArmSpeed(armSpeed);
+    // } else {
+    //   // arm motor not moving!
+    //   robotContainer.armSubsystem.SetArmSpeed(0);
+    // }
   }
 
   @Override

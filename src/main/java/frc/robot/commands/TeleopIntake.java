@@ -4,16 +4,17 @@ import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Swerve;
 
-public class TeleopShooter extends CommandBase {
-  private Shooter shooterSubsystem;
+public class TeleopIntake extends CommandBase {
+  private Intake intakeSubsystem;
   
   /**
    * A supplier for if we're currently field relative.
@@ -21,13 +22,13 @@ public class TeleopShooter extends CommandBase {
    */
   private Joystick operator;
 
-  public TeleopShooter(
-      Shooter shooterSubsystem,
+  public TeleopIntake(
+      Intake intakeSubsystem,
       Joystick operator
       ) {
-    this.shooterSubsystem = shooterSubsystem;
+    this.intakeSubsystem = intakeSubsystem;
     this.operator = operator;
-    addRequirements(shooterSubsystem);
+    addRequirements(intakeSubsystem);
 
   }
 
@@ -43,18 +44,17 @@ public class TeleopShooter extends CommandBase {
     // ));
 
     // TESTING - create Trigger & logic all inside class (pass in joystick)
+    //TODO Change to intakeTrigger
     Trigger shooterTrigger  = new Trigger (() -> {
-        return operator.getRawButton(XboxController.Button.kA.value) == true;
+        return operator.getRawButton(XboxController.Button.kA.value);
     });
 
     shooterTrigger.onTrue(new InstantCommand(() -> 
-        shooterSubsystem.ShooterOn()
-        // System.out.println("On " + shooterTrigger)
+        intakeSubsystem.IntakeIn()
     ));
 
     shooterTrigger.onFalse(new InstantCommand(() -> 
-        shooterSubsystem.ShooterOff()
-        // System.out.println("Off " + shooterTrigger)
+        intakeSubsystem.IntakeOff()
     ));
   }
 }
