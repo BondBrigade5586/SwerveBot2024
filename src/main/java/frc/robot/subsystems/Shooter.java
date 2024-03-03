@@ -27,6 +27,9 @@ public class Shooter extends SubsystemBase {
 
         topShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         bottomShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
+        topShooterMotor.setSmartCurrentLimit(40);
+        bottomShooterMotor.setSmartCurrentLimit(40);
         
         /**
          * In order to use PID functionality for a controller, a SparkPIDController object
@@ -96,6 +99,7 @@ public class Shooter extends SubsystemBase {
      * Set PID velocity of shooter to 3800 RPM
      */
     public void ShooterOn() {
+        System.out.println("Shooter Velocity: " + bottomShooterMotor.getEncoder().getVelocity());
         topShooterPID.setReference(Constants.Shooter.onVelocity, CANSparkMax.ControlType.kVelocity);
         bottomShooterPID.setReference(Constants.Shooter.onVelocity, CANSparkMax.ControlType.kVelocity);
     }

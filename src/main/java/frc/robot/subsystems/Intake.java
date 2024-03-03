@@ -1,13 +1,14 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.*;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.Rev2mDistanceSensor.Port;
+import com.revrobotics.Rev2mDistanceSensor.*;
 import com.revrobotics.Rev2mDistanceSensor;
 import frc.robot.Constants;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
@@ -37,7 +38,9 @@ public class Intake extends SubsystemBase {
         intakePID.setFF(Constants.Intake.kFF_Intake);
         intakePID.setOutputRange(Constants.Intake.kMinOutput, Constants.Intake.kMaxOutput);
 
-        distanceSensor = new Rev2mDistanceSensor(Port.kOnboard); //The I2C port
+        // Might want to change RangeProfile.kDefualt to RangeProfile.kHighSpeed
+        distanceSensor = new Rev2mDistanceSensor(Port.kOnboard, Unit.kInches, RangeProfile.kDefault); //The I2C port
+        distanceSensor.setAutomaticMode(true);
     }
 
     /**
@@ -83,6 +86,13 @@ public class Intake extends SubsystemBase {
      */
     public boolean HasNote() {
         return distanceSensor.getRange() <= Constants.Intake.sensorRange;
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("distanceSensor", distanceSensor.getRange());
+        // SmartDashboard.putBoolean("distanceSensorIsValid", distanceSensor.getIsRangeValid());
+        SmartDashboard.putString("distanceSensorUnits", distanceSensor.getDistanceUnits().toString());
     }
     
 }

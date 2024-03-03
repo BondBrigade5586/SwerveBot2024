@@ -100,16 +100,20 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
 
     //////////////////////// TEST HARNESS CODE ///////////////////////////////////
-    /////////////////////// Without sensor ///////////////////////////////////////
+    /////////////////////// Added sensor /////////////////////////////////////////
 
+    // shooter controls
+    boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
+    boolean PIDShooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kB.value);
+    boolean reverseShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kRightBumper.value);
     // intake controls
     double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
     double outSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftTrigger.value);
-    if (inSpeed > Constants.Intake.triggerDeadband) {
-      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.2);
+    if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) || (shooterOn && inSpeed > Constants.Intake.triggerDeadband)) {
+      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.45);
       // robotContainer.intakeSubsystem.IntakeIn();
     } else if (outSpeed > Constants.Intake.triggerDeadband) {
-      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(-outSpeed * 0.2);
+      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(-outSpeed * 0.45);
       // robotContainer.intakeSubsystem.IntakeOut();
     } else {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(0);
@@ -117,13 +121,10 @@ public class Robot extends TimedRobot {
     }
 
     // TESTING TELEOP SHOOTER TRIGGER
-    // shooter controls
-    boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
-    boolean reverseShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kRightBumper.value);
     // double shooterSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightY.value);
     if (shooterOn && !reverseShooter) {
-      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(1.0);
-      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(1.0);
+      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(0.25);
+      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0.25);
       // robotContainer.shooterSubsystem.ShooterOn();
     
     } else if(shooterOn && reverseShooter) {
@@ -135,6 +136,10 @@ public class Robot extends TimedRobot {
       robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0);
     }
 
+    if (PIDShooterOn) {
+      robotContainer.shooterSubsystem.ShooterOn();
+    }
+
     // ARM control
     double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
     if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
@@ -142,7 +147,8 @@ public class Robot extends TimedRobot {
       robotContainer.armSubsystem.SetArmSpeed(armSpeed);
     } else {
       // arm motor not moving!
-      robotContainer.armSubsystem.SetArmSpeed(0);
+      // robotContainer.armSubsystem.SetArmSpeed(0);
+      robotContainer.armSubsystem.StopArm();
     }
     
     //////////////////////// TEST HARNESS CODE ///////////////////////////////////

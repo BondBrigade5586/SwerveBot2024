@@ -12,12 +12,12 @@ public final class Constants {
 
   public static final class Swerve {
 
-    public static final boolean fieldRelative = false;
+    public static final boolean fieldRelative = true;
 
     public static final double stickDeadband = 0.15;
     public static final double triggerDeadband = 0.03;
 
-    public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
+    public static final boolean invertGyro = false; // Always ensure Gyro is CCW+ CW-
 
     /* Drivetrain Constants */
     public static final double trackWidth = Units.inchesToMeters(22);//21.73); //22
@@ -166,7 +166,7 @@ public final class Constants {
     public static final double triggerDeadband = 0.03;
 
     // PID coefficients
-    public static final double kP_shooter = 6e-5; 
+    public static final double kP_shooter = 0.00006; 
     public static final double kI_shooter = 0;
     public static final double kD_shooter = 0; 
     public static final double kIz_shooter = 0; 
@@ -175,7 +175,7 @@ public final class Constants {
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
 
-    public static final double onVelocity = 5000; 
+    public static final double onVelocity = 13600; //Approximately 3400 RPM
     public static final double idleVelocity = onVelocity / 2;
   }
 
@@ -195,6 +195,25 @@ public final class Constants {
     public static final double onVelocity = 900; 
 
     //Sensor variables
-    public static final double sensorRange = .1524; //Six inches in meters
+    public static final double sensorRange = 6; //Six inches
+  }
+
+  public static final class Arm {
+
+    public static double intakePosition = 0.67;
+    public static double closeSpeakerPosition = 0.60;
+    public static double farSpeakerPosition = 0.45;
+    public static double AmpPosition = 0.15;
+
+    // PID coefficients
+    public static final double kP_Arm = 0.1; 
+    public static final double kI_Arm = 1e-4;
+    public static final double kD_Arm = 1; 
+    public static final double kIz_Arm = 0; 
+    public static final double kFF_Arm = 0;
+    
+    public static final double kMaxOutput = 1; 
+    public static final double kMinOutput = -1;
+
   }
 }
