@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Joystick;
 import frc.lib.config.SwerveModuleConstants;
 
 public final class Constants {
@@ -202,8 +203,8 @@ public final class Constants {
 
     public static double intakePosition = 0.67;
     public static double closeSpeakerPosition = 0.60;
-    public static double farSpeakerPosition = 0.45;
-    public static double AmpPosition = 0.15;
+    public static double farSpeakerPosition = 0.55;
+    public static double AmpPosition = 0.075;
 
     // PID coefficients
     public static final double kP_Arm = 0.1; 

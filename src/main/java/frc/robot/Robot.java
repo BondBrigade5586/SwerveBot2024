@@ -6,6 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -19,6 +23,10 @@ import frc.lib.config.CTREConfigs;
  */
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
+  /* Camera code 
+  private NetworkTableEntry dashboardCamera;
+  public UsbCamera shooterCamera;
+  */
   /**
    * The command instance for the robot's autonomous command state.
    */
@@ -36,6 +44,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    /*Camera code 
+    //FIXME needs device number
+    shooterCamera = CameraServer.startAutomaticCapture(0);
+    dashboardCamera = NetworkTableInstance.getDefault().getTable("").getEntry("cameraSelection");
+    */
     ctreConfigs = new CTREConfigs();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
@@ -104,7 +117,6 @@ public class Robot extends TimedRobot {
 
     // shooter controls
     boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
-    boolean PIDShooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kB.value);
     boolean reverseShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kRightBumper.value);
     // intake controls
     double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
@@ -136,20 +148,17 @@ public class Robot extends TimedRobot {
       robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0);
     }
 
-    if (PIDShooterOn) {
-      robotContainer.shooterSubsystem.ShooterOn();
-    }
-
     // ARM control
-    double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
-    if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
-      // set arm motor to joystick speed
-      robotContainer.armSubsystem.SetArmSpeed(armSpeed);
-    } else {
-      // arm motor not moving!
-      // robotContainer.armSubsystem.SetArmSpeed(0);
-      robotContainer.armSubsystem.StopArm();
-    }
+        // boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
+    // double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
+    // if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
+    //   // set arm motor to joystick speed
+    //   robotContainer.armSubsystem.SetArmSpeed(armSpeed);
+    // } else {
+    //   // arm motor not moving!
+    //   // robotContainer.armSubsystem.SetArmSpeed(0);
+    //   robotContainer.armSubsystem.StopArm();
+    // }
     
     //////////////////////// TEST HARNESS CODE ///////////////////////////////////
     /////////////////////// With sensor //////////////////////////////////////////
