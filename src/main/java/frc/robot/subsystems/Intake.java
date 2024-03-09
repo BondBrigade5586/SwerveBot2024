@@ -1,13 +1,13 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.*;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.Rev2mDistanceSensor.*;
 import com.revrobotics.Rev2mDistanceSensor;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,9 +20,21 @@ public class Intake extends SubsystemBase {
 
     private Rev2mDistanceSensor distanceSensor;
 
+  private AddressableLED robotLights;
+  private AddressableLEDBuffer lightBuffer;
+  private int lightStartPoint;
+
     public Intake() {
         intakeMotor = new CANSparkMax(51, MotorType.kBrushless);
         
+        robotLights = new AddressableLED(0);
+        //FIXME add the correct LED Amount
+        lightBuffer = new AddressableLEDBuffer(Constants.Intake.LEDCount);
+        robotLights.setLength(lightBuffer.getLength());
+        lightStartPoint = 0;
+        robotLights.setData(lightBuffer);
+        robotLights.start();
+
         /**
          * In order to use PID functionality for a controller, a SparkPIDController object
          * is constructed by calling the getPIDController() method on an existing
@@ -88,11 +100,37 @@ public class Intake extends SubsystemBase {
         return distanceSensor.getRange() <= Constants.Intake.sensorRange;
     }
 
+    /**
+     * Set LED strip to RGB color
+     * @param r
+     * @param g
+     * @param b
+     */
+    public void setLED(Color color) {
+        for (int i = 0; i < lightBuffer.getLength(); i++) {
+          lightBuffer.setLED(i, color);
+        }
+    }
+
+    public void setRainbowLights() {
+        for (int i = 0; i < lightBuffer.getLength(); i++) {
+            final int hue = (lightStartPoint + (i * 180 / lightBuffer.getLength())) % 180;
+            lightBuffer.setHSV(i, hue, 255, 255);
+        }
+        lightStartPoint += 3;
+        lightStartPoint %= 180;
+    }
+
+    public void setLightData() {
+        robotLights.setData(lightBuffer);
+    }
+
     @Override
     public void periodic() {
         SmartDashboard.putNumber("distanceSensor", distanceSensor.getRange());
         // SmartDashboard.putBoolean("distanceSensorIsValid", distanceSensor.getIsRangeValid());
         SmartDashboard.putString("distanceSensorUnits", distanceSensor.getDistanceUnits().toString());
+        robotLights.setData(lightBuffer);
     }
     
 }

@@ -82,16 +82,7 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
 
-        SmartDashboard.putNumber("Left Arm Position", leftArmMotor.getEncoder().getPosition());
-        SmartDashboard.putNumber("Right Arm Position", rightArmMotor.getEncoder().getPosition());
-
         SmartDashboard.putNumber("encoderPosition", pivotEncoder.getAbsolutePosition());
-
-        // TESTING
-        double relativeEncoderPosition = leftArmMotor.getEncoder().getPosition(); // ( leftArmMotor.getEncoder().getPosition() / Math.pow(5.23, 3) ); // % 360;
-        double absoluteEncoderPosition = pivotEncoder.getAbsolutePosition() * 360;
-
-        SmartDashboard.putNumber("rel pos (deg)", relativeEncoderPosition);
-        SmartDashboard.putNumber("abs pos (deg)", absoluteEncoderPosition);
+        
     }
 }

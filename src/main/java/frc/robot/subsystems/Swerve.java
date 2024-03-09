@@ -257,6 +257,8 @@ public class Swerve extends SubsystemBase {
       swerveModules[3].getPosition()
     });
 
+    SmartDashboard.putNumber("Yaw", getYaw().getDegrees());
+
     // field.setRobotPose(getPose());
 
     // updateOdometryPose();
