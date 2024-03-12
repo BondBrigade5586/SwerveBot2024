@@ -130,7 +130,7 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putNumber("distanceSensor", distanceSensor.getRange());
         // SmartDashboard.putBoolean("distanceSensorIsValid", distanceSensor.getIsRangeValid());
         SmartDashboard.putString("distanceSensorUnits", distanceSensor.getDistanceUnits().toString());
-        robotLights.setData(lightBuffer);
+        // robotLights.setData(lightBuffer);
     }
     
 }

@@ -172,7 +172,7 @@ public class Swerve extends SubsystemBase {
     SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
       fieldRelative
           ? ChassisSpeeds.fromFieldRelativeSpeeds(
-              velocity.getX(), velocity.getY(), rotation, getYaw()
+              velocity.getX(), velocity.getY(), rotation, gyro.getRotation2d()
             )
           : new ChassisSpeeds(velocity.getX(), velocity.getY(), rotation));
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
@@ -237,8 +237,8 @@ public class Swerve extends SubsystemBase {
     
     //NavX Code
     Rotation2d testYaw = (Constants.Swerve.invertGyro)
-        ? Rotation2d.fromDegrees(180 - ((double)gyro.getYaw()))
-        : Rotation2d.fromDegrees(((double)gyro.getYaw()) + 180);
+        ? Rotation2d.fromDegrees(/*180 - */((double)gyro.getYaw()))
+        : Rotation2d.fromDegrees(((double)gyro.getYaw())/*  + 180*/);
 
         // System.out.println(testYaw);
     // // TESTING printouts

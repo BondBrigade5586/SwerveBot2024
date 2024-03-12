@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Arm extends SubsystemBase {
     // Old arm code
-    // private SparkPIDController leftArmPID;
-    // private SparkPIDController rightArmPID;
+    private SparkPIDController leftArmPID;
+    private SparkPIDController rightArmPID;
     private CANSparkMax rightArmMotor;
     private CANSparkMax leftArmMotor;
     private DutyCycleEncoder pivotEncoder;
@@ -28,23 +28,23 @@ public class Arm extends SubsystemBase {
         leftArmMotor = new CANSparkMax(53, MotorType.kBrushless);
         pivotEncoder = new DutyCycleEncoder(4);
         // Old arm code
-        // leftArmPID = leftArmMotor.getPIDController();
-        // rightArmPID = rightArmMotor.getPIDController();
+        leftArmPID = leftArmMotor.getPIDController();
+        rightArmPID = rightArmMotor.getPIDController();
 
-        // leftArmPID.setP(Constants.Arm.kP_Arm);
-        // leftArmPID.setI(Constants.Arm.kI_Arm);
-        // leftArmPID.setD(Constants.Arm.kD_Arm);
-        // leftArmPID.setIZone(Constants.Arm.kIz_Arm);
-        // leftArmPID.setFF(Constants.Arm.kFF_Arm);
-        // leftArmPID.setOutputRange(Constants.Arm.kMinOutput, Constants.Arm.kMaxOutput);
+        leftArmPID.setP(Constants.Arm.kP_Arm);
+        leftArmPID.setI(Constants.Arm.kI_Arm);
+        leftArmPID.setD(Constants.Arm.kD_Arm);
+        leftArmPID.setIZone(Constants.Arm.kIz_Arm);
+        leftArmPID.setFF(Constants.Arm.kFF_Arm);
+        leftArmPID.setOutputRange(Constants.Arm.kMinOutput, Constants.Arm.kMaxOutput);
 
-        // rightArmPID.setP(Constants.Arm.kP_Arm);
-        // rightArmPID.setI(Constants.Arm.kI_Arm);
-        // rightArmPID.setD(Constants.Arm.kD_Arm);
-        // rightArmPID.setIZone(Constants.Arm.kIz_Arm);
-        // rightArmPID.setFF(Constants.Arm.kFF_Arm);
-        // rightArmPID.setOutputRange(Constants.Arm.kMinOutput, Constants.Arm.kMaxOutput);
-        // pivotEncoder.setPositionOffset(pivotEncoder.getAbsolutePosition());
+        rightArmPID.setP(Constants.Arm.kP_Arm);
+        rightArmPID.setI(Constants.Arm.kI_Arm);
+        rightArmPID.setD(Constants.Arm.kD_Arm);
+        rightArmPID.setIZone(Constants.Arm.kIz_Arm);
+        rightArmPID.setFF(Constants.Arm.kFF_Arm);
+        rightArmPID.setOutputRange(Constants.Arm.kMinOutput, Constants.Arm.kMaxOutput);
+        pivotEncoder.setPositionOffset(pivotEncoder.getAbsolutePosition());
     }  
 
     public void SetArmPosition() {
@@ -71,8 +71,8 @@ public class Arm extends SubsystemBase {
      * Stops the arm from moving
      */
     public void StopArm() {
-        // leftArmPID.setReference(leftArmMotor.getEncoder().getPosition(), ControlType.kPosition);
-        // rightArmPID.setReference(rightArmMotor.getEncoder().getPosition(), ControlType.kPosition);
+        leftArmPID.setReference(leftArmMotor.getEncoder().getPosition(), ControlType.kPosition);
+        rightArmPID.setReference(rightArmMotor.getEncoder().getPosition(), ControlType.kPosition);
     }
 
     public double GetAbsolutePosition() {

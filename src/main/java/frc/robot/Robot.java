@@ -137,7 +137,6 @@ public class Robot extends TimedRobot {
       if (robotContainer.intakeSubsystem.HasNote()) {
         //Change LED color
         robotContainer.intakeSubsystem.setLED(Color.kGreen);
-        robotContainer.intakeSubsystem.setLightData();
       }
       // robotContainer.intakeSubsystem.IntakeOff();
     }
@@ -145,30 +144,29 @@ public class Robot extends TimedRobot {
     // TESTING TELEOP SHOOTER TRIGGER
     // double shooterSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightY.value);
     if (shooterOn && !reverseShooter) {
-      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(0.25);
-      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0.25);
-      // robotContainer.shooterSubsystem.ShooterOn();
+      // robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(0.25);
+      // robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0.25);
+      robotContainer.shooterSubsystem.ShooterOn();
     
     } else if(shooterOn && reverseShooter) {
-      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(-0.3);
-      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(-0.3);
+      // robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(-0.3);
+      // robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(-0.3);
     } else {
-      // robotContainer.shooterSubsystem.ShooterOff();
-      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(0);
-      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0);
+      robotContainer.shooterSubsystem.ShooterOff();
+      // robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(0);
+      // robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0);
     }
 
     // ARM control
-        // boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
-    // double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
-    // if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
-    //   // set arm motor to joystick speed
-    //   robotContainer.armSubsystem.SetArmSpeed(armSpeed);
-    // } else {
-    //   // arm motor not moving!
-    //   // robotContainer.armSubsystem.SetArmSpeed(0);
-    //   robotContainer.armSubsystem.StopArm();
-    // }
+    double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
+    if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
+      // set arm motor to joystick speed
+      robotContainer.armSubsystem.SetArmSpeed(armSpeed);
+    } else {
+      // arm motor not moving!
+      // robotContainer.armSubsystem.SetArmSpeed(0);
+      robotContainer.armSubsystem.StopArm();
+    }
     
     //////////////////////// TEST HARNESS CODE ///////////////////////////////////
     /////////////////////// With sensor //////////////////////////////////////////

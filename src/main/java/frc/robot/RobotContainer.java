@@ -59,6 +59,8 @@ public class RobotContainer {
       new JoystickButton(driver, XboxController.Button.kY.value);
   private final JoystickButton robotCentric =
       new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
+  private final JoystickButton PIDControllerButton = 
+      new JoystickButton(operator, XboxController.Button.kB.value);
   // TESTING
   // private final JoystickButton updateOdometryPose = 
   // new JoystickButton(driver, XboxController.Button.kB.value);  
@@ -80,9 +82,9 @@ public class RobotContainer {
             () -> -driver.getRawAxis(rotationAxis),
             () -> !robotCentric.getAsBoolean()));
 
-    // shooterSubsystem.setDefaultCommand(
-    //   new TeleopShooter(shooterSubsystem, operator)
-    // );
+    /*shooterSubsystem.setDefaultCommand(
+      new TeleopShooter(shooterSubsystem, operator)
+    );*/
 
     // Configure the button bindings
     configureButtonBindings();
@@ -102,8 +104,7 @@ public class RobotContainer {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
-    final JoystickButton PIDControllerButton = new JoystickButton(operator, XboxController.Button.kB.value);
-    PIDControllerButton.whileTrue(new TeleopArm(armSubsystem, 0.60).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    //PIDControllerButton.whileTrue(new TeleopArm(armSubsystem, 0.60).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     // updateOdometryPose.onTrue(new InstantCommand(() -> {
     //   swerveSubsystem.updateOdometryPose();
