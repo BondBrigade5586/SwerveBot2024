@@ -12,10 +12,12 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.lib.config.CTREConfigs;
 
 /**
@@ -25,6 +27,8 @@ import frc.lib.config.CTREConfigs;
  * project.
  */
 public class Robot extends TimedRobot {
+
+  private SendableChooser<Object> autoChooser;
   public static CTREConfigs ctreConfigs;
   
   private NetworkTableEntry dashboardCamera;
@@ -47,6 +51,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+
+    /*autoChooser = new SendableChooser<>();
+
+    autoChooser.addOption("Center Position", new SequentialCommandGroup(null));*/
+
     shooterCamera = CameraServer.startAutomaticCapture(0);
     dashboardCamera = NetworkTableInstance.getDefault().getTable("").getEntry("cameraSelection");
 

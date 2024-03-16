@@ -58,13 +58,19 @@ public class Arm extends SubsystemBase {
      * @param speed
      */
     public void SetArmSpeed (double speed) {
-        rightArmMotor.set(-0.3 * speed);
-        leftArmMotor.set(0.3 * speed);
+        rightArmMotor.set(-0.6 * speed);
+        leftArmMotor.set(0.6 * speed);
     }
 
-    public void MoveArm() {
-        rightArmMotor.set(-0.3);
-        leftArmMotor.set(0.3);
+    // public void MoveArm() {
+    //     rightArmMotor.set(-0.3);
+    //     leftArmMotor.set(0.3);
+    // }
+
+    //Solution to arm problem??
+    public void MoveArm(double speed) {
+        rightArmMotor.set(speed * -0.6);
+        leftArmMotor.set(speed * 1.2);
     }
 
     /**

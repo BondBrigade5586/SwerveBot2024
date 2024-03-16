@@ -131,7 +131,7 @@ public final class Constants {
       public static final int driveMotorID = 22;
       public static final int angleMotorID = 21;
       public static final int canCoderID = 23;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(157.85);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(147.65);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -141,7 +141,7 @@ public final class Constants {
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 11;
       public static final int canCoderID = 13;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(315.00);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(316.14);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -177,7 +177,7 @@ public final class Constants {
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
 
-    public static final double onVelocity = 13600; //Approximately 3400 RPM
+    public static final double onVelocity = 22400; //Approximately 3400 RPM
     public static final double idleVelocity = onVelocity / 2;
   }
 
@@ -207,7 +207,7 @@ public final class Constants {
     public static double intakePosition = 0.67;
     public static double closeSpeakerPosition = 0.60;
     public static double farSpeakerPosition = 0.55;
-    public static double AmpPosition = 0.075;
+    public static double AmpPosition = 0.06;
 
     // PID coefficients
     public static final double kP_Arm = 0.1; 

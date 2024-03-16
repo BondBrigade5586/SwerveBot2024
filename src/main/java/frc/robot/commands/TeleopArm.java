@@ -24,7 +24,7 @@ public class TeleopArm extends PIDCommand {
         // This uses the output
         output -> {
           // Use the output here
-          arm.MoveArm();
+          arm.MoveArm(output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
@@ -34,5 +34,8 @@ public class TeleopArm extends PIDCommand {
   @Override
   public boolean isFinished() {
     return false;
+
+    //TESTING
+    // return getController().atSetpoint();
   }
 }
