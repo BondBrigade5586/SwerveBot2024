@@ -13,10 +13,10 @@ import frc.robot.subsystems.Arm;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TeleopArm extends PIDCommand {
   /** Creates a new TeleopArm. */
-  public TeleopArm(Arm arm, double armPosition) {
+  public TeleopArm(Arm arm, double armPosition, double kP) {
     super(
         // The controller that the command will use
-        new PIDController(.05, 0, 0),
+        new PIDController(kP, 0, 0),
         // This should return the measurement
         () -> arm.GetAbsolutePosition(),
         // This should return the setpoint (can also be a constant)

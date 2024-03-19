@@ -59,7 +59,13 @@ public class RobotContainer {
       new JoystickButton(driver, XboxController.Button.kY.value);
   private final JoystickButton robotCentric =
       new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton PIDControllerButton = 
+  private final JoystickButton PIDIntakeButton = 
+      new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+  private final JoystickButton PIDAmpButton = 
+      new JoystickButton(operator, XboxController.Button.kY.value);
+  private final JoystickButton PIDCloseSpeakerButton = 
+      new JoystickButton(operator, XboxController.Button.kX.value);
+  private final JoystickButton PIDFarSpeakerButton = 
       new JoystickButton(operator, XboxController.Button.kB.value);
   // TESTING
   // private final JoystickButton updateOdometryPose = 
@@ -104,7 +110,10 @@ public class RobotContainer {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
-    //PIDControllerButton.whileTrue(new TeleopArm(armSubsystem, 0.60).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    PIDIntakeButton.whileTrue(new TeleopArm(armSubsystem, Constants.Arm.intakePosition, 2.5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    PIDAmpButton.whileTrue(new TeleopArm(armSubsystem, Constants.Arm.AmpPosition, 5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    PIDCloseSpeakerButton.whileTrue(new TeleopArm(armSubsystem, Constants.Arm.closeSpeakerPosition, 5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    PIDFarSpeakerButton.whileTrue(new TeleopArm(armSubsystem, Constants.Arm.farSpeakerPosition, 5).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
 
     // updateOdometryPose.onTrue(new InstantCommand(() -> {
     //   swerveSubsystem.updateOdometryPose();

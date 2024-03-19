@@ -99,7 +99,7 @@ public class Shooter extends SubsystemBase {
      * Set PID velocity of shooter to 3800 RPM
      */
     public void ShooterOn() {
-        System.out.println("Shooter Velocity: " + bottomShooterMotor.getEncoder().getVelocity());
+        //System.out.println("Shooter Velocity: " + bottomShooterMotor.getEncoder().getVelocity());
         topShooterPID.setReference(Constants.Shooter.onVelocity, CANSparkMax.ControlType.kVelocity);
         bottomShooterPID.setReference(Constants.Shooter.onVelocity, CANSparkMax.ControlType.kVelocity);
     }

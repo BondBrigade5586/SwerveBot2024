@@ -52,9 +52,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    /*autoChooser = new SendableChooser<>();
+    // autoChooser = new SendableChooser<>();
 
-    autoChooser.addOption("Center Position", new SequentialCommandGroup(null));*/
+    // autoChooser.addOption("Center Position", new SequentialCommandGroup(
+      
+    // ));
 
     shooterCamera = CameraServer.startAutomaticCapture(0);
     dashboardCamera = NetworkTableInstance.getDefault().getTable("").getEntry("cameraSelection");
@@ -131,15 +133,15 @@ public class Robot extends TimedRobot {
 
     // shooter controls
     boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
-    boolean reverseShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kRightBumper.value);
+    boolean reverseShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kLeftBumper.value);
     // intake controls
     double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
     double outSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftTrigger.value);
     if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) || (shooterOn && inSpeed > Constants.Intake.triggerDeadband)) {
-      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.45);
+      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.65);
       // robotContainer.intakeSubsystem.IntakeIn();
     } else if (outSpeed > Constants.Intake.triggerDeadband) {
-      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(-outSpeed * 0.45);
+      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(-outSpeed * 05);
       // robotContainer.intakeSubsystem.IntakeOut();
     } else {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(0);

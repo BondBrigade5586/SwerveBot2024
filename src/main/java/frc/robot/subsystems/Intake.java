@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.*;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.Rev2mDistanceSensor.*;
-import com.revrobotics.Rev2mDistanceSensor;
+
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -49,6 +49,8 @@ public class Intake extends SubsystemBase {
         intakePID.setIZone(Constants.Intake.kIz_Intake);
         intakePID.setFF(Constants.Intake.kFF_Intake);
         intakePID.setOutputRange(Constants.Intake.kMinOutput, Constants.Intake.kMaxOutput);
+
+        intakeMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
         // Might want to change RangeProfile.kDefualt to RangeProfile.kHighSpeed
         distanceSensor = new Rev2mDistanceSensor(Port.kOnboard, Unit.kInches, RangeProfile.kDefault); //The I2C port
