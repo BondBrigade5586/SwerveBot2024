@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public final class Constants {
 
+  public static final int currentLimit = 40;
+
   public static final class Swerve {
 
     public static final boolean fieldRelative = true;
@@ -29,7 +31,7 @@ public final class Constants {
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
     public static final double openLoopRamp = 0.25;
-    public static final double closedLoopRamp = 0.0;
+    public static final double closedLoopRamp = 0.05;
 
     public static final double driveGearRatio = (6.75 / 1.0); // 6.75:1
     public static final double angleGearRatio = (12.8 / 1.0); // 12.8:1
@@ -49,16 +51,27 @@ public final class Constants {
 
     /* Swerve Current Limiting */
     public static final int angleContinuousCurrentLimit = 20;
-    public static final int driveContinuousCurrentLimit = 80;
+    public static final int driveContinuousCurrentLimit = 40;
 
     /* Angle Motor PID Values */
-    public static final double angleKP = 0.021;
-    public static final double angleKI = 0.0;
+    // public static final double angleKP = 0.025;
+    // public static final double angleKI = 0.0;
+    // public static final double angleKD = 0.0;
+    // public static final double angleKFF = 0.0;
+    // TESTING
+    public static final double angleKP = 0.03;
+    public static final double angleKI = 0;
     public static final double angleKD = 0.0;
     public static final double angleKFF = 0.0;
 
+
     /* Drive Motor PID Values */
-    public static final double driveKP = 0.15;
+    // public static final double driveKP = 0.02;
+    // public static final double driveKI = 0.0;
+    // public static final double driveKD = 0.0;
+    // public static final double driveKFF = 0.0;
+    //  TESTING
+    public static final double driveKP = 0.02;
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
     public static final double driveKFF = 0.0;
@@ -78,7 +91,7 @@ public final class Constants {
     /**
      * The maximum robot movement speed in meters per second.
      */
-    public static final double maxSpeed = 4.5;
+    public static final double maxSpeed = 4.5; // 5.2;
     /**
      * The maximum robot angular velocity in radians per second.
      */
@@ -121,7 +134,7 @@ public final class Constants {
       public static final int angleMotorID = 41;
       public static final int canCoderID = 43;
       // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(303.5);
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(102.04);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(104.50);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -131,7 +144,7 @@ public final class Constants {
       public static final int driveMotorID = 22;
       public static final int angleMotorID = 21;
       public static final int canCoderID = 23;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(157.85);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(146.16);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -141,7 +154,7 @@ public final class Constants {
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 11;
       public static final int canCoderID = 13;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(315.00);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(316.67);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -177,7 +190,7 @@ public final class Constants {
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
 
-    public static final double onVelocity = 13600; //Approximately 3400 RPM
+    public static final double onVelocity = 20000; //Approximately 5000 RPM
     public static final double idleVelocity = onVelocity / 2;
   }
 
@@ -196,7 +209,7 @@ public final class Constants {
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
 
-    public static final double onVelocity = 900; 
+    public static final double onVelocity = 2000; 
 
     //Sensor variables
     public static final double sensorRange = 6; //Six inches
@@ -204,20 +217,24 @@ public final class Constants {
 
   public static final class Arm {
 
-    public static double intakePosition = 0.67;
-    public static double closeSpeakerPosition = 0.60;
-    public static double farSpeakerPosition = 0.55;
-    public static double AmpPosition = 0.075;
+    public static double intakePosition = 0.826;
+    //The shot that's directly against the Subwoofer
+    public static double closeSpeakerPosition = 0.70;
+    //The shot were the back fo our robot is against the line
+    public static double farSpeakerPosition = 0.75;
+    public static double AmpPosition = 0.33; // 0.074;
 
     // PID coefficients
-    public static final double kP_Arm = 0.1; 
-    public static final double kI_Arm = 1e-4;
-    public static final double kD_Arm = 1; 
+    public static final double kP_Arm = 1e-4; 
+    public static final double kI_Arm = 0;
+    public static final double kD_Arm = 0; 
     public static final double kIz_Arm = 0; 
     public static final double kFF_Arm = 0;
     
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
+
+    public static final double armOffset = 0.641;
 
   }
 }

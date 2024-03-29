@@ -20,20 +20,23 @@ public class Intake extends SubsystemBase {
 
     private Rev2mDistanceSensor distanceSensor;
 
-  private AddressableLED robotLights;
-  private AddressableLEDBuffer lightBuffer;
-  private int lightStartPoint;
+//   private AddressableLED robotLights;
+//   private AddressableLEDBuffer lightBuffer;
+//   private int lightStartPoint;
 
     public Intake() {
+        //Motor Configuration
         intakeMotor = new CANSparkMax(51, MotorType.kBrushless);
+        intakeMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        intakeMotor.setSmartCurrentLimit(Constants.currentLimit);
         
-        robotLights = new AddressableLED(0);
-        //FIXME add the correct LED Amount
-        lightBuffer = new AddressableLEDBuffer(Constants.Intake.LEDCount);
-        robotLights.setLength(lightBuffer.getLength());
-        lightStartPoint = 0;
-        robotLights.setData(lightBuffer);
-        robotLights.start();
+        // robotLights = new AddressableLED(0);
+        // //FIXME add the correct LED Amount
+        // lightBuffer = new AddressableLEDBuffer(Constants.Intake.LEDCount);
+        // robotLights.setLength(lightBuffer.getLength());
+        // lightStartPoint = 0;
+        // robotLights.setData(lightBuffer);
+        // robotLights.start();
 
         /**
          * In order to use PID functionality for a controller, a SparkPIDController object
@@ -60,7 +63,7 @@ public class Intake extends SubsystemBase {
      * @param speed
      */
     public void SetIntakeMotorSpeed (double speed) {
-        intakeMotor.set(speed);
+        intakeMotor.set(-speed);
     }
 
     /**
@@ -106,24 +109,24 @@ public class Intake extends SubsystemBase {
      * @param g
      * @param b
      */
-    public void setLED(Color color) {
-        for (int i = 0; i < lightBuffer.getLength(); i++) {
-          lightBuffer.setLED(i, color);
-        }
-    }
+    // public void setLED(Color color) {
+    //     for (int i = 0; i < lightBuffer.getLength(); i++) {
+    //       lightBuffer.setLED(i, color);
+    //     }
+    // }
 
-    public void setRainbowLights() {
-        for (int i = 0; i < lightBuffer.getLength(); i++) {
-            final int hue = (lightStartPoint + (i * 180 / lightBuffer.getLength())) % 180;
-            lightBuffer.setHSV(i, hue, 255, 255);
-        }
-        lightStartPoint += 3;
-        lightStartPoint %= 180;
-    }
+    // public void setRainbowLights() {
+    //     for (int i = 0; i < lightBuffer.getLength(); i++) {
+    //         final int hue = (lightStartPoint + (i * 180 / lightBuffer.getLength())) % 180;
+    //         lightBuffer.setHSV(i, hue, 255, 255);
+    //     }
+    //     lightStartPoint += 3;
+    //     lightStartPoint %= 180;
+    // }
 
-    public void setLightData() {
-        robotLights.setData(lightBuffer);
-    }
+    // public void setLightData() {
+    //     robotLights.setData(lightBuffer);
+    // }
 
     @Override
     public void periodic() {

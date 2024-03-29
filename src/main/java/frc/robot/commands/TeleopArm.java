@@ -16,7 +16,7 @@ public class TeleopArm extends PIDCommand {
   public TeleopArm(Arm arm, double armPosition) {
     super(
         // The controller that the command will use
-        new PIDController(.05, 0, 0),
+        new PIDController(7.0, 0, 0),
         // This should return the measurement
         () -> arm.GetAbsolutePosition(),
         // This should return the setpoint (can also be a constant)
@@ -24,15 +24,17 @@ public class TeleopArm extends PIDCommand {
         // This uses the output
         output -> {
           // Use the output here
-          arm.MoveArm();
+          arm.SetArmSpeed(output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(arm);
     // Configure additional PID options by calling `getController` here.
+    // System.out.println("TELEOP ARM POSITION: " + armPosition);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return getController().atSetpoint();
   }
 }

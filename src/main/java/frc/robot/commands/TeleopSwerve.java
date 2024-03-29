@@ -87,7 +87,7 @@ public class TeleopSwerve extends CommandBase {
         new Translation2d(xVelocity, yVelocity).times(Constants.Swerve.slowSpeed),
         rotationVal * Constants.Swerve.slowAngularVelocity,
         // fieldRelativeSupplier.getAsBoolean(),
-        true,
+        false,
         false);
     } else {
       /* Full-speed drive */
@@ -95,7 +95,7 @@ public class TeleopSwerve extends CommandBase {
           new Translation2d(xVelocity, yVelocity).times(Constants.Swerve.maxSpeed),
           rotationVal * Constants.Swerve.maxAngularVelocity,
           // fieldRelativeSupplier.getAsBoolean(),
-          true,
+          false,
           false);
     }
   }

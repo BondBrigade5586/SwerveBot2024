@@ -5,7 +5,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -21,7 +21,7 @@ public class Shooter extends SubsystemBase {
     private SparkPIDController bottomShooterPID;
 
     public Shooter() {
-        // intakeMotor = new CANSparkMax(51, MotorType.kBrushless);
+        //Motor Configuration
         topShooterMotor = new CANSparkMax(61, MotorType.kBrushless);
         bottomShooterMotor = new CANSparkMax(62, MotorType.kBrushless);    
 
@@ -99,7 +99,6 @@ public class Shooter extends SubsystemBase {
      * Set PID velocity of shooter to 3800 RPM
      */
     public void ShooterOn() {
-        System.out.println("Shooter Velocity: " + bottomShooterMotor.getEncoder().getVelocity());
         topShooterPID.setReference(Constants.Shooter.onVelocity, CANSparkMax.ControlType.kVelocity);
         bottomShooterPID.setReference(Constants.Shooter.onVelocity, CANSparkMax.ControlType.kVelocity);
     }
@@ -118,6 +117,12 @@ public class Shooter extends SubsystemBase {
     public void ShooterIdle() {
         topShooterPID.setReference(Constants.Shooter.idleVelocity, CANSparkMax.ControlType.kVelocity);
         bottomShooterPID.setReference(Constants.Shooter.idleVelocity, CANSparkMax.ControlType.kVelocity);
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putBoolean("Shooter Ready", bottomShooterMotor.getEncoder().getVelocity() >= 4600);
+        SmartDashboard.putNumber("Shooter Velocity", bottomShooterMotor.getEncoder().getVelocity());
     }
     
 }

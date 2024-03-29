@@ -22,11 +22,22 @@ public class Arm extends SubsystemBase {
     private CANSparkMax leftArmMotor;
     private DutyCycleEncoder pivotEncoder;
     private PIDController armPID;
+    public double armOutput = 0;
 
     public Arm() {
+        //Motor Configuration
         rightArmMotor = new CANSparkMax(54, MotorType.kBrushless);
         leftArmMotor = new CANSparkMax(53, MotorType.kBrushless);
-        pivotEncoder = new DutyCycleEncoder(4);
+
+        rightArmMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        leftArmMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
+        rightArmMotor.setSmartCurrentLimit(Constants.currentLimit);
+        leftArmMotor.setSmartCurrentLimit(Constants.currentLimit);
+
+        pivotEncoder = new DutyCycleEncoder(0);
+
+        pivotEncoder.setPositionOffset(0.);
         // Old arm code
         leftArmPID = leftArmMotor.getPIDController();
         rightArmPID = rightArmMotor.getPIDController();
@@ -44,7 +55,7 @@ public class Arm extends SubsystemBase {
         rightArmPID.setIZone(Constants.Arm.kIz_Arm);
         rightArmPID.setFF(Constants.Arm.kFF_Arm);
         rightArmPID.setOutputRange(Constants.Arm.kMinOutput, Constants.Arm.kMaxOutput);
-        pivotEncoder.setPositionOffset(pivotEncoder.getAbsolutePosition());
+        //pivotEncoder.setPositionOffset(pivotEncoder.getAbsolutePosition());
     }  
 
     public void SetArmPosition() {
@@ -58,13 +69,9 @@ public class Arm extends SubsystemBase {
      * @param speed
      */
     public void SetArmSpeed (double speed) {
-        rightArmMotor.set(-0.3 * speed);
-        leftArmMotor.set(0.3 * speed);
-    }
-
-    public void MoveArm() {
-        rightArmMotor.set(-0.3);
-        leftArmMotor.set(0.3);
+        rightArmMotor.set(0.5 * speed);
+        leftArmMotor.set(-0.5 * speed);
+        armOutput = speed;
     }
 
     /**
@@ -82,7 +89,8 @@ public class Arm extends SubsystemBase {
     @Override
     public void periodic() {
 
-        SmartDashboard.putNumber("encoderPosition", pivotEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber("Encoder Position", pivotEncoder.getAbsolutePosition());
+        SmartDashboard.putNumber("Arm Output", armOutput);
         
     }
 }

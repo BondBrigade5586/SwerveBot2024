@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+
+import edu.wpi.first.wpilibj.util.Color;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.config.CTREConfigs;
@@ -27,9 +29,15 @@ import frc.lib.config.CTREConfigs;
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
   
+  // CAMERA CONFIG
   private NetworkTableEntry dashboardCamera;
   public UsbCamera shooterCamera;
-  
+
+  // LEDS CONFIG
+  private final int m_rainbowFirstPixelHue = 0;
+  public AddressableLED m_led;
+  public AddressableLEDBuffer m_ledBuffer;
+
   /**
    * The command instance for the robot's autonomous command state.
    */
@@ -54,7 +62,19 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
-    robotContainer.intakeSubsystem.setLED(Color.kBlack);
+
+    // LEDS CONFIG
+    // PWM port 9
+    // Must be a PWM header, not MXP or DIO
+    m_led = new AddressableLED(9);
+    // Reuse buffer
+    // Default to a length of 60, start empty output
+    // Length is expensive to set, so only set it once, then just update data
+    m_ledBuffer = new AddressableLEDBuffer(85);
+    m_led.setLength(m_ledBuffer.getLength());
+    // Set the data
+    m_led.setData(m_ledBuffer);
+    m_led.start();
   }
 
   /**
@@ -70,13 +90,13 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+    SmartDashboard.putBoolean("Is in bounds", robotContainer.armSubsystem.GetAbsolutePosition() > Constants.Arm.AmpPosition);
     CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    robotContainer.intakeSubsystem.setLED(Color.kBlack);
   }
 
   @Override
@@ -101,9 +121,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // System.out.println("TELEOPINIT");
-    robotContainer.swerveSubsystem.zeroGyro();
-    robotContainer.intakeSubsystem.setLED(Color.kRed);
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -117,98 +134,97 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    //////////////////////// TEST HARNESS CODE ///////////////////////////////////
-    /////////////////////// Added sensor /////////////////////////////////////////
+    // LEDS CONFIG
+    if (robotContainer.intakeSubsystem.HasNote()) {
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        m_ledBuffer.setLED(i, Color.kBlue);
+      }
+    } 
+    else {
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        m_ledBuffer.setLED(i, Color.kGreen);
+      }
+    } 
+    
+    // Set the LEDs
+    m_led.setData(m_ledBuffer);
 
-    // shooter controls
+    //////////////////////// OPERATOR CONTROLS ///////////////////////////////////
+
+    /* SHOOTER controls */ 
     boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
     boolean reverseShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kRightBumper.value);
-    // intake controls
+    
+    if (shooterOn && !reverseShooter) {
+      robotContainer.shooterSubsystem.ShooterOn();
+    } else if(shooterOn && reverseShooter) {
+      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(-0.3);
+      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(-0.3);
+    } else {
+      robotContainer.shooterSubsystem.ShooterOff();
+    }
+
+    /* INTAKE controls */ 
     double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
     double outSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftTrigger.value);
+    
     if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) || (shooterOn && inSpeed > Constants.Intake.triggerDeadband)) {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.45);
-      // robotContainer.intakeSubsystem.IntakeIn();
     } else if (outSpeed > Constants.Intake.triggerDeadband) {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(-outSpeed * 0.45);
-      // robotContainer.intakeSubsystem.IntakeOut();
     } else {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(0);
       if (robotContainer.intakeSubsystem.HasNote()) {
         //Change LED color
-        robotContainer.intakeSubsystem.setLED(Color.kGreen);
+        // robotContainer.intakeSubsystem.setLED(Color.kGreen);
       }
-      // robotContainer.intakeSubsystem.IntakeOff();
-    }
+    }     
 
-    // TESTING TELEOP SHOOTER TRIGGER
-    // double shooterSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightY.value);
-    if (shooterOn && !reverseShooter) {
-      // robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(0.25);
-      // robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0.25);
-      robotContainer.shooterSubsystem.ShooterOn();
-    
-    } else if(shooterOn && reverseShooter) {
-      // robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(-0.3);
-      // robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(-0.3);
-    } else {
-      robotContainer.shooterSubsystem.ShooterOff();
-      // robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(0);
-      // robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(0);
-    }
-
-    // ARM control
+    /* ARM controls - W/ STOP (TESTING!!) */
+    // position range is 0.0836 (amp) - 0.834 (intake)
+    // FIXME - FIX ABSOLUTE ENCODER!!!!!!!
+    // FIXME - UPDATE TO NEW POSITION CONSTANTS < or >
     double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
-    if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
-      // set arm motor to joystick speed
+    boolean isInBounds = false;
+    double currentArmPosition = robotContainer.armSubsystem.GetAbsolutePosition();
+    SmartDashboard.putNumber("Arm Speed", armSpeed);
+
+    if (currentArmPosition < Constants.Arm.AmpPosition
+        || currentArmPosition > Constants.Arm.intakePosition
+    ) {
+
+      isInBounds = false;
+      // CASE: Arm is out of bounds
+      //       The arm speed is negative when the arm is moving upwards.
+      //       arm 'higher' than amp or 'lower' than intake position
+      //       only allow direction to return to valid range
+      if (armSpeed > Constants.Shooter.stickDeadband
+          && currentArmPosition < Constants.Arm.AmpPosition
+      ) {
+        // arm is 'higher' than amp, allow to lower arm
+        robotContainer.armSubsystem.SetArmSpeed(armSpeed);
+      } else if (armSpeed < -Constants.Shooter.stickDeadband
+          && currentArmPosition > Constants.Arm.intakePosition
+      ) {
+        // arm is 'lower' than intake, allow to raise arm
+        robotContainer.armSubsystem.SetArmSpeed(armSpeed);
+      } else {
+        robotContainer.armSubsystem.SetArmSpeed(0);
+        robotContainer.armSubsystem.StopArm();
+      }
+    } else if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
+      // CASE: within accepted position range (between amp & intake)
+      //       set arm motor to joystick speed
+      isInBounds = true;
       robotContainer.armSubsystem.SetArmSpeed(armSpeed);
     } else {
-      // arm motor not moving!
-      // robotContainer.armSubsystem.SetArmSpeed(0);
+      // CASE: Arm motor at rest
+      robotContainer.armSubsystem.SetArmSpeed(0);
       robotContainer.armSubsystem.StopArm();
     }
     
-    //////////////////////// TEST HARNESS CODE ///////////////////////////////////
-    /////////////////////// With sensor //////////////////////////////////////////
-    // intake controls
-    // double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
-    // double outSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftTrigger.value);
-
-    // //Shooter controls
-    // boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
-
-    // // ARM control
-    // double armSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftY.value);
-
-    // //Intake logic
-    // if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) ||
-    //       (shooterOn && inSpeed > Constants.Intake.triggerDeadband)
-    // ) {
-    //   // robotContainer.shooterSubsystem.SetIntakeMotorSpeed(inSpeed);
-    //   robotContainer.intakeSubsystem.IntakeIn();
-    // } else if (outSpeed > Constants.Intake.triggerDeadband) {
-    //   // robotContainer.shooterSubsystem.SetIntakeMotorSpeed(-outSpeed);
-    //   robotContainer.intakeSubsystem.IntakeOut();
-    // } else {
-    //   // robotContainer.shooterSubsystem.SetIntakeMotorSpeed(0);
-    //   robotContainer.intakeSubsystem.IntakeOff();
-    // }
-
-    // Shooter logic
-    // if (shooterOn) {
-    //   robotContainer.shooterSubsystem.ShooterOn();
-    // } else {
-    //   robotContainer.shooterSubsystem.ShooterOff();
-    // }
-
-    // // Arm logic
-    // if (Math.abs(armSpeed) > Constants.Shooter.stickDeadband) {
-    //   // set arm motor to joystick speed
-    //   robotContainer.armSubsystem.SetArmSpeed(armSpeed);
-    // } else {
-    //   // arm motor not moving!
-    //   robotContainer.armSubsystem.SetArmSpeed(0);
-    // }
   }
 
   @Override

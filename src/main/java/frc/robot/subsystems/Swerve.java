@@ -56,7 +56,7 @@ public class Swerve extends SubsystemBase {
 
   public Swerve() {
     gyro = new AHRS(SPI.Port.kMXP);
-    zeroGyro();
+    // zeroGyro();
     
     swerveModules =
         new SwerveModule[] {
@@ -77,48 +77,6 @@ public class Swerve extends SubsystemBase {
       Constants.Swerve.swerveKinematics, 
       getYaw(), 
       swerveModulePositions);
-    // TESTING - remove estimator?
-    // swerveOdometry = new SwerveDrivePoseEstimator(
-    //   Constants.Swerve.swerveKinematics,
-    //   getYaw(),
-    //   swerveModulePositions,
-    //   new Pose2d(),
-    //   stateStdDevs,
-    //   visionMeasurementStdDevs
-    // );
-
-  //   AutoBuilder.configureHolonomic(
-  //     this::getPose, // Robot pose supplier
-  //     this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
-  //     this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-  //     this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-  //     new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-  //         // PIDConstants(5, 0, 0) is a sensible default; maybe we shouldn't be using the teleop values in autonomous
-  //         new PIDConstants(5, 0, 0), // Translation PID constants
-  //         new PIDConstants(5, 0, 0), // Rotation PID constants
-  //         1, // Max module speed, in m/s
-  //         0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-  //         new ReplanningConfig(true, false) // Default path replanning config. See the API for the options here
-  //     ),
-  //     () -> {
-  //       // Boolean supplier that controls when the path will be mirrored for the red alliance
-  //       // This will flip the path being followed to the red side of the field.
-  //       // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-  //       var alliance = DriverStation.getAlliance();
-  //       if (alliance.isPresent()) {
-  //           return alliance.get() == DriverStation.Alliance.Red;
-  //       }
-  //       return false;
-  //     },
-  //     this // Reference to this subsystem to set requirements
-  //   );
-
-  //   field = new Field2d();
-  //   SmartDashboard.putData("Field", field);
-
-  //   // Set up custom logging to add the current path to a field 2d widget
-  //   PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
   }
 
   public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -131,35 +89,6 @@ public class Swerve extends SubsystemBase {
     SwerveModuleState[] targetStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(targetSpeeds);
     setModuleStates(targetStates);
   }
-
-  // public void updateOdometryPose() {
-  //   boolean hasTargets = LimelightHelpers.getTV("limelight");
-  //   if(!hasTargets) return;
-
-  //   Pose2d pose = LimelightHelpers.getBotPose2d("limelight");
-  //   Translation2d poseTranslation = pose.getTranslation();
-
-  //   // Get the position of the primary tag. If it's further than 2.5 meters away, discard the data.
-  //   double distance = LimelightHelpers.getTargetPose3d_CameraSpace("limelight").getTranslation().getDistance(new Translation3d());
-  //   if(distance > 2.5) return;
-
-  //   // Offset the pose to the center of the field because the limelight returns (0, 0)
-  //   // as the center instead of (16.45, 8.09). This should probably be fixed in
-  //   // LimelightHelpers instead, but this is easiest for now.
-  //   Pose2d fixedPose = new Pose2d(new Translation2d(
-  //     16.4592 / 2 + poseTranslation.getX(),
-  //     8.09625 / 2 + poseTranslation.getY()
-  //   ), pose.getRotation());
-
-  //   double[] botpose = LimelightHelpers.getBotPose("limelight");
-  //   if(botpose.length == 0) return;
-
-  //   addVisionMeasurement(fixedPose, botpose[6]);
-  // }
-
-  // public void addVisionMeasurement(Pose2d pose, double timestamp) {
-  //   swerveOdometry.addVisionMeasurement(pose, Timer.getFPGATimestamp() - (timestamp / 1000.0));
-  // }
 
   /**
    * Updates the swerve drivetrain with the specified values.
@@ -193,8 +122,6 @@ public class Swerve extends SubsystemBase {
 
   public Pose2d getPose() {
     return swerveOdometry.getPoseMeters();
-    // TESTING - remove estimator?
-    // return swerveOdometry.getEstimatedPosition();
   }
 
   /**

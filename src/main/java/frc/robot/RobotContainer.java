@@ -14,6 +14,8 @@ import java.nio.channels.SelectableChannel;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -59,11 +61,15 @@ public class RobotContainer {
       new JoystickButton(driver, XboxController.Button.kY.value);
   private final JoystickButton robotCentric =
       new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-  private final JoystickButton PIDControllerButton = 
-      new JoystickButton(operator, XboxController.Button.kB.value);
-  // TESTING
-  // private final JoystickButton updateOdometryPose = 
-  // new JoystickButton(driver, XboxController.Button.kB.value);  
+  private final JoystickButton MidSpeakerButton = 
+      new JoystickButton(operator, XboxController.Button.kX.value);
+  // FIXME: JUST USE SOFT STOPS!!
+  //        Note: POV/d-pad is not supported
+  // private final JoystickButton AmpButton = 
+  //     new JoystickButton(operator, XboxController.Button.kY.value);
+  // private final JoystickButton IntakeButton = 
+  //     new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+
 
   /* Subsystems */
   public final Swerve swerveSubsystem = new Swerve();
@@ -80,7 +86,8 @@ public class RobotContainer {
             () -> -driver.getRawAxis(translationAxis),
             () -> -driver.getRawAxis(strafeAxis),
             () -> -driver.getRawAxis(rotationAxis),
-            () -> !robotCentric.getAsBoolean()));
+            () -> !
+            robotCentric.getAsBoolean()));
 
     /*shooterSubsystem.setDefaultCommand(
       new TeleopShooter(shooterSubsystem, operator)
@@ -104,7 +111,11 @@ public class RobotContainer {
     /* Driver Buttons */
     zeroGyro.onTrue(new InstantCommand(swerveSubsystem::zeroGyro));
 
-    //PIDControllerButton.whileTrue(new TeleopArm(armSubsystem, 0.60).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // TESTING
+    MidSpeakerButton.whileTrue(new TeleopArm(armSubsystem, Constants.Arm.farSpeakerPosition).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // AmpButton.whileTrue(new TeleopArm(armSubsystem, Constants.Arm.AmpPosition).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    // IntakeButton.whileTrue(new TeleopArm(armSubsystem, Constants.Arm.intakePosition).withInterruptBehavior(InterruptionBehavior.kCancelSelf));
+    
 
     // updateOdometryPose.onTrue(new InstantCommand(() -> {
     //   swerveSubsystem.updateOdometryPose();
