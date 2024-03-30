@@ -203,4 +203,9 @@ public class SwerveModule {
     return angleEncoder.getMagnetHealth();
   }
 
+  public void stop() {
+		driveMotor.set(0);
+		angleMotor.set(0);
+	}
+
 }

@@ -8,12 +8,14 @@
 package frc.robot;
 
 import java.nio.channels.SelectableChannel;
+import java.util.ArrayList;
 
 // import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -29,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
+import frc.robot.commands.AutoDrive;
 import frc.robot.commands.TeleopArm;
 import frc.robot.commands.TeleopIntake;
 import frc.robot.commands.TeleopShooter;
@@ -128,6 +131,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    // return autoChooser.getSelected();
+    return new AutoDrive(swerveSubsystem, new ArrayList<Translation2d>() {{
+      add(new Translation2d(Units.inchesToMeters(24), 0));
+    }});
   }
 }

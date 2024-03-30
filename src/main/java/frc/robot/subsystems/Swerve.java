@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
@@ -29,6 +30,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
+
 import com.kauailabs.navx.frc.AHRS;
 
 public class Swerve extends SubsystemBase {
@@ -36,6 +39,13 @@ public class Swerve extends SubsystemBase {
   
   private SwerveDriveOdometry swerveOdometry;
   private SwerveModule[] swerveModules;
+
+  public void stopModules() {
+    swerveModules[0].stop();
+    swerveModules[1].stop();
+    swerveModules[2].stop();
+    swerveModules[3].stop();
+  }
 
   public Swerve() {
     gyro = new AHRS(SPI.Port.kMXP);
