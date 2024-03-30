@@ -62,7 +62,7 @@ public final class Constants {
     public static final double angleKP = 0.03;
     public static final double angleKI = 0;
     public static final double angleKD = 0.0;
-    public static final double angleKFF = 0.0;
+    public static final double angleKFF = 0.0; 
 
 
     /* Drive Motor PID Values */
@@ -74,7 +74,7 @@ public final class Constants {
     public static final double driveKP = 0.02;
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
-    public static final double driveKFF = 0.0;
+    public static final double driveKFF = 1 / (5676 / 60); // 1 / free speed (rotations per second -> rpm / 60) 
 
     /* Drive Motor Characterization Values */
     public static final double driveKS = 0.667;
@@ -123,7 +123,7 @@ public final class Constants {
       public static final int angleMotorID = 31;
       public static final int canCoderID = 33;
       // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(187);
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(248.55);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(42.275);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -154,7 +154,7 @@ public final class Constants {
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 11;
       public static final int canCoderID = 13;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(316.67);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(318.42);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -222,7 +222,7 @@ public final class Constants {
     public static double closeSpeakerPosition = 0.70;
     //The shot were the back fo our robot is against the line
     public static double farSpeakerPosition = 0.75;
-    public static double AmpPosition = 0.33; // 0.074;
+    public static double AmpPosition = 0.152; // 0.074;
 
     // PID coefficients
     public static final double kP_Arm = 1e-4; 

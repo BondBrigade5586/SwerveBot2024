@@ -34,28 +34,12 @@ import com.kauailabs.navx.frc.AHRS;
 public class Swerve extends SubsystemBase {
   private final AHRS gyro;
   
-  // TESTING - remove estimator?
-  //previously SwerveDriveOdometry swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), swerveModulePositions);
-  // private SwerveDrivePoseEstimator swerveOdometry;
   private SwerveDriveOdometry swerveOdometry;
   private SwerveModule[] swerveModules;
 
-  // private Field2d field;
-
-  /**
-   * Standard deviations of model states. Increase these numbers to trust your model's state estimates less. This
-   * matrix is in the form [x, y, theta]ᵀ, with units in meters and radians, then meters.
-   */
-  // private static final Matrix<N3, N1> stateStdDevs = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
-
-  /**
-   * Standard deviations of the vision measurements. Increase these numbers to trust global measurements from vision
-   * less. This matrix is in the form [x, y, theta]ᵀ, with units in meters and radians.
-   */
-  // private static final Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(15));
-
   public Swerve() {
     gyro = new AHRS(SPI.Port.kMXP);
+    //gyro.reset();
     // zeroGyro();
     
     swerveModules =
@@ -165,7 +149,7 @@ public class Swerve extends SubsystemBase {
     //NavX Code
     Rotation2d testYaw = (Constants.Swerve.invertGyro)
         ? Rotation2d.fromDegrees(/*180 - */((double)gyro.getYaw()))
-        : Rotation2d.fromDegrees(((double)gyro.getYaw())/*  + 180*/);
+        : Rotation2d.fromDegrees(((double)gyro.getYaw())  + 180);
 
         // System.out.println(testYaw);
     // // TESTING printouts
@@ -185,18 +169,5 @@ public class Swerve extends SubsystemBase {
     });
 
     SmartDashboard.putNumber("Yaw", getYaw().getDegrees());
-
-    // field.setRobotPose(getPose());
-
-    // updateOdometryPose();
-
-    // for (SwerveModule mod : swerveModules) {
-    //   SmartDashboard.putNumber(
-    //       "Mod " + mod.moduleNumber + " Cancoder", mod.getCANcoderAbsoluteAngle().getDegrees());
-    //   SmartDashboard.putNumber(
-    //       "Mod " + mod.moduleNumber + " Integrated", mod.getState().angle.getDegrees());
-    //   SmartDashboard.putNumber(
-    //       "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-    // }
   }
 }
