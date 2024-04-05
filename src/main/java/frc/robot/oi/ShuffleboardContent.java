@@ -31,6 +31,8 @@ public class ShuffleboardContent {
                 () -> module.getTurnMotorCurrent());
         swerveModuleLayout.addNumber("Offset (" + modulePositionAbbreviation + ")", 
                 () -> module.getOffset());
+        swerveModuleLayout.addNumber("Target Angle", 
+                () -> module.getTargetAngle());
         // swerveModuleLayout.addString("Magnetic Field (" + modulePositionAbbreviation + ")", 
         //         () -> module.getMagnetFieldStrength().toString());
 

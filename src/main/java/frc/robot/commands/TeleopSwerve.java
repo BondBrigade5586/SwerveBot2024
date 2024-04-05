@@ -42,15 +42,19 @@ public class TeleopSwerve extends CommandBase {
   /**
    * Limits the rate of change of the swerve drive's X velocity. Velocity is in meters per second.
    */
-  private SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(3.0);
+  private SlewRateLimiter xVelocityLimiter = new SlewRateLimiter(10.0);
   /**
    * Limits the rate of change of the swerve drive's Y velocity. Velocity is in meters per second.
    */
-  private SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(3.0);
+  private SlewRateLimiter yVelocityLimiter = new SlewRateLimiter(10.0);
   /**
    * Limits the rate of change of the swerve drive's rotation velocity. Rotation is in radians per second.
    */
-  private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
+  private SlewRateLimiter rotationLimiter = new SlewRateLimiter(10.0);
+
+  private double xVelocity;
+  private double yVelocity;
+  private double rotationVal;
 
   public TeleopSwerve(
       Swerve swerveSubsystem,
@@ -72,9 +76,9 @@ public class TeleopSwerve extends CommandBase {
   @Override
   public void execute() {
     /* Get Values, Deadband */
-    double xVelocity = xVelocityLimiter.calculate(MathUtil.applyDeadband(xVelocitySupplier.getAsDouble(), Constants.Swerve.stickDeadband));
-    double yVelocity = yVelocityLimiter.calculate(MathUtil.applyDeadband(yVelocitySupplier.getAsDouble(), Constants.Swerve.stickDeadband));
-    double rotationVal = rotationLimiter.calculate(MathUtil.applyDeadband(rotationSupplier.getAsDouble(), Constants.Swerve.stickDeadband));
+    xVelocity = xVelocityLimiter.calculate(MathUtil.applyDeadband(xVelocitySupplier.getAsDouble(), Constants.Swerve.stickDeadband));
+    yVelocity = yVelocityLimiter.calculate(MathUtil.applyDeadband(yVelocitySupplier.getAsDouble(), Constants.Swerve.stickDeadband));
+    rotationVal = rotationLimiter.calculate(MathUtil.applyDeadband(rotationSupplier.getAsDouble(), Constants.Swerve.stickDeadband));
 
     //Turtle-mode controls
     double rightTrigger = driver.getRawAxis(XboxController.Axis.kRightTrigger.value);
@@ -99,4 +103,18 @@ public class TeleopSwerve extends CommandBase {
           false);
     }
   }
+
+  public double getXVelocity() {
+    return xVelocity;
+  }
+
+  public double getYVelocity() {
+    return yVelocity;
+  }
+
+  public double getRotationoVal() {
+    return rotationVal;
+  }
+
+  
 }

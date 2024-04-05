@@ -54,27 +54,16 @@ public final class Constants {
     public static final int driveContinuousCurrentLimit = 40;
 
     /* Angle Motor PID Values */
-    // public static final double angleKP = 0.025;
-    // public static final double angleKI = 0.0;
-    // public static final double angleKD = 0.0;
-    // public static final double angleKFF = 0.0;
-    // TESTING
-    public static final double angleKP = 0.03;
-    public static final double angleKI = 0;
+    public static final double angleKP = 0.06;
+    public static final double angleKI = 5e-7;
     public static final double angleKD = 0.0;
-    public static final double angleKFF = 0.0; 
-
+    public static final double angleKFF = 1 / 5700; // free speed of neo 1650
 
     /* Drive Motor PID Values */
-    // public static final double driveKP = 0.02;
-    // public static final double driveKI = 0.0;
-    // public static final double driveKD = 0.0;
-    // public static final double driveKFF = 0.0;
-    //  TESTING
     public static final double driveKP = 0.02;
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
-    public static final double driveKFF = 1 / (5676 / 60); // 1 / free speed (rotations per second -> rpm / 60) 
+    public static final double driveKFF = 1 / 5700; // free speed of neo 1650
 
     /* Drive Motor Characterization Values */
     public static final double driveKS = 0.667;
@@ -122,8 +111,7 @@ public final class Constants {
       public static final int driveMotorID = 32;
       public static final int angleMotorID = 31;
       public static final int canCoderID = 33;
-      // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(187);
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(42.275);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(41.484);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -133,8 +121,7 @@ public final class Constants {
       public static final int driveMotorID = 42;
       public static final int angleMotorID = 41;
       public static final int canCoderID = 43;
-      // public static final Rotation2d angleOffset = Rotation2d.fromDegrees(303.5);
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(104.50);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(332.49);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -144,7 +131,7 @@ public final class Constants {
       public static final int driveMotorID = 22;
       public static final int angleMotorID = 21;
       public static final int canCoderID = 23;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(146.16);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(145.72);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -154,7 +141,7 @@ public final class Constants {
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 11;
       public static final int canCoderID = 13;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(318.42);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(315.61);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -190,7 +177,7 @@ public final class Constants {
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
 
-    public static final double onVelocity = 20000; //Approximately 5000 RPM
+    public static final double onVelocity = 21200; //Approximately 5000 RPM
     public static final double idleVelocity = onVelocity / 2;
   }
 
@@ -209,7 +196,7 @@ public final class Constants {
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
 
-    public static final double onVelocity = 2000; 
+    public static final double onVelocity = 5000; 
 
     //Sensor variables
     public static final double sensorRange = 6; //Six inches
@@ -217,12 +204,12 @@ public final class Constants {
 
   public static final class Arm {
 
-    public static double intakePosition = 0.826;
+    public static double intakePosition = 0.987;
     //The shot that's directly against the Subwoofer
     public static double closeSpeakerPosition = 0.70;
     //The shot were the back fo our robot is against the line
     public static double farSpeakerPosition = 0.75;
-    public static double AmpPosition = 0.152; // 0.074;
+    public static double AmpPosition = 0.288; // 0.074;
 
     // PID coefficients
     public static final double kP_Arm = 1e-4; 

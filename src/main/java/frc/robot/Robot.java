@@ -7,12 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-
 import edu.wpi.first.wpilibj.util.Color;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -21,6 +22,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.config.CTREConfigs;
+import frc.robot.Constants.Swerve;
+import frc.robot.commands.TeleopSwerve;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -30,10 +33,13 @@ import frc.lib.config.CTREConfigs;
  */
 public class Robot extends TimedRobot {
   public static CTREConfigs ctreConfigs;
+
+  Timer timer;
+  int autoCondition = 0;
   
   // CAMERA CONFIG
-  private NetworkTableEntry dashboardCamera;
-  public UsbCamera shooterCamera;
+  // private NetworkTableEntry dashboardCamera;
+  // public UsbCamera shooterCamera;
 
   // LEDS CONFIG
   private final int m_rainbowFirstPixelHue = 0;
@@ -57,8 +63,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    shooterCamera = CameraServer.startAutomaticCapture(0);
-    dashboardCamera = NetworkTableInstance.getDefault().getTable("").getEntry("cameraSelection");
+    //shooterCamera = CameraServer.startAutomaticCapture(0);
+    //dashboardCamera = NetworkTableInstance.getDefault().getTable("").getEntry("cameraSelection");
 
     ctreConfigs = new CTREConfigs();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -110,7 +116,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand = robotContainer.getAutonomousCommand();
-
+    
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
@@ -162,10 +168,10 @@ public class Robot extends TimedRobot {
     
     if (shooterOn && !reverseShooter) {
       robotContainer.shooterSubsystem.ShooterOn();
-    } else if(shooterOn && reverseShooter) {
+    } /*else if(shooterOn && reverseShooter) {
       robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(-0.3);
       robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(-0.3);
-    } else {
+    }*/ else {
       robotContainer.shooterSubsystem.ShooterOff();
     }
 
@@ -173,7 +179,7 @@ public class Robot extends TimedRobot {
     double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
     double outSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftTrigger.value);
     
-    if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) || (shooterOn && inSpeed > Constants.Intake.triggerDeadband)) {
+    if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) || (inSpeed > Constants.Intake.triggerDeadband && robotContainer.intakeSubsystem.sensorIsNull()) || (shooterOn && inSpeed > Constants.Intake.triggerDeadband)) {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.45);
     } else if (outSpeed > Constants.Intake.triggerDeadband) {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(-outSpeed * 0.45);
@@ -226,8 +232,7 @@ public class Robot extends TimedRobot {
       // CASE: Arm motor at rest
       robotContainer.armSubsystem.SetArmSpeed(0);
       robotContainer.armSubsystem.StopArm();
-    }
-    
+    }    
   }
 
   @Override

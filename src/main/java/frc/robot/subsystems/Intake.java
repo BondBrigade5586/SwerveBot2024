@@ -102,6 +102,9 @@ public class Intake extends SubsystemBase {
     public boolean HasNote() {
         return distanceSensor.getRange() <= Constants.Intake.sensorRange;
     }
+    public boolean sensorIsNull() {
+        return distanceSensor.getRange() == -1;
+    }
 
     /**
      * Set LED strip to RGB color

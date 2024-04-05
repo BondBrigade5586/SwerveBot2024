@@ -37,6 +37,9 @@ public class SwerveModule {
   private final SparkPIDController driveController;
   private final SparkPIDController angleController;
 
+  // TESTING
+  private SwerveModuleState targetState = new SwerveModuleState();
+
   private final SimpleMotorFeedforward feedforward =
       new SimpleMotorFeedforward(
           Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
@@ -73,10 +76,19 @@ public class SwerveModule {
     // REV and CTRE are not
     desiredState = OnboardModuleState.optimize(desiredState, getState().angle);
 
-    // System.out.println("mod " + moduleNumber + " desired: " + desiredState.angle);
+    // TESTING
+    targetState = desiredState;
 
     setAngle(desiredState);
     setSpeed(desiredState, isOpenLoop);
+  }
+
+  public SwerveModuleState getTargetState() {
+    return targetState;
+  }
+
+  public double getTargetAngle() {
+    return targetState.angle.getDegrees();
   }
 
   private void resetToAbsolute() {
@@ -103,7 +115,9 @@ public class SwerveModule {
     angleController.setD(Constants.Swerve.angleKD);
     angleController.setFF(Constants.Swerve.angleKFF);
     angleMotor.enableVoltageCompensation(Constants.Swerve.voltageComp);
-    angleMotor.burnFlash();
+    // burning the flash takes too long and messes with other operations
+    // root of the angle position on power on/off issue
+    // angleMotor.burnFlash();
     resetToAbsolute();
   }
 
@@ -120,7 +134,7 @@ public class SwerveModule {
     driveController.setD(Constants.Swerve.driveKD);
     driveController.setFF(Constants.Swerve.driveKFF);
     driveMotor.enableVoltageCompensation(Constants.Swerve.voltageComp);
-    driveMotor.burnFlash();
+    // driveMotor.burnFlash();
     driveEncoder.setPosition(0.0);
   }
 
