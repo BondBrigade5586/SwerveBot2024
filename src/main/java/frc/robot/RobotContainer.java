@@ -32,7 +32,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.*;
-import frc.robot.commands.AutoDrive;
+//import frc.robot.commands.AutoDrive;
 import frc.robot.commands.DoNothing;
 import frc.robot.commands.TeleopArm;
 import frc.robot.commands.TeleopIntake;
@@ -96,7 +96,9 @@ public class RobotContainer {
             () -> -driver.getRawAxis(translationAxis),
             () -> -driver.getRawAxis(strafeAxis),
             () -> -driver.getRawAxis(rotationAxis),
-            () -> !robotCentric.getAsBoolean()));
+            () -> true));
+
+    SmartDashboard.putBoolean("RobotCentric", robotCentric.getAsBoolean());
 
     /*shooterSubsystem.setDefaultCommand(
       new TeleopShooter(shooterSubsystem, operator)
@@ -107,13 +109,13 @@ public class RobotContainer {
 
     // autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     autoChooser = new SendableChooser<>();
-    autoChooser.setDefaultOption("Drive Timed", new TimedDrive(swerveSubsystem, 3));
-    autoChooser.addOption("Do Nothing:)", new DoNothing());
-    autoChooser.addOption("TESTING - DISTANCE DRIVE", new AutoDrive(swerveSubsystem, new ArrayList<Translation2d>() {{
+    // autoChooser.setDefaultOption("Drive Timed", new TimedDrive(swerveSubsystem, 2));
+    // autoChooser.addOption("Do Nothing:)", new DoNothing());
+    /*autoChooser.addOption("TESTING - DISTANCE DRIVE", new AutoDrive(swerveSubsystem, new ArrayList<Translation2d>() {{
       new Translation2d(Units.inchesToMeters(24), 0);
-  }}));
-    autoChooser.addOption("Drive Timed", new TimedDrive(swerveSubsystem, 3));
-    SmartDashboard.putData("Auto Mode", autoChooser);
+  }}));*/
+    // autoChooser.addOption("Drive Timed", new TimedDrive(swerveSubsystem, 3));
+    // SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
   /**

@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -63,6 +64,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    DriverStation.silenceJoystickConnectionWarning(true);
+    SmartDashboard.putBoolean("Slow Mode", false);
+    
     //shooterCamera = CameraServer.startAutomaticCapture(0);
     //dashboardCamera = NetworkTableInstance.getDefault().getTable("").getEntry("cameraSelection");
 
@@ -129,6 +133,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -143,35 +148,44 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    // LEDS CONFIG
-    if (robotContainer.intakeSubsystem.HasNote()) {
+    // TESTING PRINTOUTS
+    SmartDashboard.putBoolean("Dist Sensor Null?", robotContainer.intakeSubsystem.sensorIsNull());
+    SmartDashboard.putBoolean("Dist isEnabled", robotContainer.intakeSubsystem.distanceSensor.isEnabled());
+
+    if (robotContainer.intakeSubsystem.sensorIsNull()) {
+      for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+        // Sets the specified LED to the RGB values for red
+        m_ledBuffer.setLED(i, Color.kRed);
+      }
+      m_led.setData(m_ledBuffer);
+    } else if (robotContainer.intakeSubsystem.HasNote()) {
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
         // Sets the specified LED to the RGB values for red
         m_ledBuffer.setLED(i, Color.kBlue);
       }
-    } 
-    else {
+      m_led.setData(m_ledBuffer);
+    } else if(!robotContainer.intakeSubsystem.HasNote()) {
       for (var i = 0; i < m_ledBuffer.getLength(); i++) {
         // Sets the specified LED to the RGB values for red
         m_ledBuffer.setLED(i, Color.kGreen);
       }
-    } 
+      m_led.setData(m_ledBuffer);
+    }
     
-    // Set the LEDs
-    m_led.setData(m_ledBuffer);
-
     //////////////////////// OPERATOR CONTROLS ///////////////////////////////////
 
     /* SHOOTER controls */ 
     boolean shooterOn = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kA.value);
     boolean reverseShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kRightBumper.value);
+    boolean slowShooter = robotContainer.GetOperatorController().getRawButton(XboxController.Button.kLeftBumper.value);
     
     if (shooterOn && !reverseShooter) {
-      robotContainer.shooterSubsystem.ShooterOn();
-    } /*else if(shooterOn && reverseShooter) {
-      robotContainer.shooterSubsystem.SetBottomShooterMotorSpeed(-0.3);
-      robotContainer.shooterSubsystem.SetTopShooterMotorSpeed(-0.3);
-    }*/ else {
+      robotContainer.shooterSubsystem.ShooterOn(Constants.Shooter.onVelocity);
+    } else if (slowShooter && !reverseShooter) {
+      robotContainer.shooterSubsystem.ShooterOn(Constants.Shooter.onVelocity / 2);
+    } else if(reverseShooter) {
+      robotContainer.shooterSubsystem.reverseShooter();
+    } else {
       robotContainer.shooterSubsystem.ShooterOff();
     }
 
@@ -179,11 +193,14 @@ public class Robot extends TimedRobot {
     double inSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kRightTrigger.value);
     double outSpeed = robotContainer.GetOperatorController().getRawAxis(XboxController.Axis.kLeftTrigger.value);
     
-    if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) || (inSpeed > Constants.Intake.triggerDeadband && robotContainer.intakeSubsystem.sensorIsNull()) || (shooterOn && inSpeed > Constants.Intake.triggerDeadband)) {
-      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.45);
+    if ((inSpeed > Constants.Intake.triggerDeadband && !robotContainer.intakeSubsystem.HasNote()) 
+        || (inSpeed > Constants.Intake.triggerDeadband
+        && robotContainer.intakeSubsystem.sensorIsNull())
+        || (shooterOn && inSpeed > Constants.Intake.triggerDeadband)) {
+      robotContainer.intakeSubsystem.SetIntakeMotorSpeed(inSpeed * 0.75);
     } else if (outSpeed > Constants.Intake.triggerDeadband) {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(-outSpeed * 0.45);
-    } else {
+    }else {
       robotContainer.intakeSubsystem.SetIntakeMotorSpeed(0);
       if (robotContainer.intakeSubsystem.HasNote()) {
         //Change LED color
@@ -244,4 +261,5 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
 }

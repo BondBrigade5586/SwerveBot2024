@@ -50,7 +50,7 @@ public class TeleopIntake extends CommandBase {
     });
 
     shooterTrigger.onTrue(new InstantCommand(() -> 
-        intakeSubsystem.IntakeIn()
+      intakeSubsystem.IntakeIn()
     ));
 
     shooterTrigger.onFalse(new InstantCommand(() -> 

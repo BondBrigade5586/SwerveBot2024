@@ -48,7 +48,7 @@ public class TeleopShooter extends CommandBase {
     });
 
     shooterTrigger.onTrue(new InstantCommand(() -> 
-        shooterSubsystem.ShooterOn()
+        shooterSubsystem.ShooterOn(Constants.Shooter.onVelocity)
         // System.out.println("On " + shooterTrigger)
     ));
 

@@ -18,7 +18,7 @@ public class Intake extends SubsystemBase {
 
     private SparkPIDController intakePID;
 
-    private Rev2mDistanceSensor distanceSensor;
+    public Rev2mDistanceSensor distanceSensor;
 
 //   private AddressableLED robotLights;
 //   private AddressableLEDBuffer lightBuffer;
@@ -102,8 +102,14 @@ public class Intake extends SubsystemBase {
     public boolean HasNote() {
         return distanceSensor.getRange() <= Constants.Intake.sensorRange;
     }
+
     public boolean sensorIsNull() {
         return distanceSensor.getRange() == -1;
+    }
+
+    public void initalizeSensor() {
+        distanceSensor = new Rev2mDistanceSensor(Port.kOnboard, Unit.kInches, RangeProfile.kDefault); //The I2C port
+        distanceSensor.setAutomaticMode(true);
     }
 
     /**

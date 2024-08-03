@@ -98,9 +98,17 @@ public class Shooter extends SubsystemBase {
     /**
      * Set PID velocity of shooter to 3800 RPM
      */
-    public void ShooterOn() {
-        topShooterPID.setReference(Constants.Shooter.onVelocity, CANSparkMax.ControlType.kVelocity);
-        bottomShooterPID.setReference(Constants.Shooter.onVelocity, CANSparkMax.ControlType.kVelocity);
+    public void ShooterOn(double velocity) {
+        topShooterPID.setReference(velocity, CANSparkMax.ControlType.kVelocity);
+        bottomShooterPID.setReference(velocity, CANSparkMax.ControlType.kVelocity);
+    }
+
+    /**
+     * Set PID velocity of shooter to 3800 RPM
+     */
+    public void reverseShooter() {
+        topShooterPID.setReference(-Constants.Shooter.onVelocity / 2, CANSparkMax.ControlType.kVelocity);
+        bottomShooterPID.setReference(-Constants.Shooter.onVelocity / 2, CANSparkMax.ControlType.kVelocity);
     }
 
     /**

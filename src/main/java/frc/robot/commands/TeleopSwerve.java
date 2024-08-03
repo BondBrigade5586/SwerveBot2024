@@ -84,8 +84,10 @@ public class TeleopSwerve extends CommandBase {
     double rightTrigger = driver.getRawAxis(XboxController.Axis.kRightTrigger.value);
     double leftTrigger = driver.getRawAxis(XboxController.Axis.kLeftTrigger.value);
 
-    if ((rightTrigger > Constants.Swerve.triggerDeadband) || 
-        (leftTrigger > Constants.Swerve.triggerDeadband)) {
+    if ((rightTrigger > Constants.Swerve.triggerDeadband) 
+         || (leftTrigger > Constants.Swerve.triggerDeadband)
+         //|| (SmartDashboard.getBoolean("Slow Mode", false))
+        ) {
       //Slow drive
       swerveSubsystem.drive(
         new Translation2d(xVelocity, yVelocity).times(Constants.Swerve.slowSpeed),
@@ -115,6 +117,5 @@ public class TeleopSwerve extends CommandBase {
   public double getRotationoVal() {
     return rotationVal;
   }
-
   
 }

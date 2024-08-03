@@ -121,7 +121,7 @@ public final class Constants {
       public static final int driveMotorID = 42;
       public static final int angleMotorID = 41;
       public static final int canCoderID = 43;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(332.49);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(102.65);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -131,7 +131,7 @@ public final class Constants {
       public static final int driveMotorID = 22;
       public static final int angleMotorID = 21;
       public static final int canCoderID = 23;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(145.72);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(145.28);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -141,7 +141,7 @@ public final class Constants {
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 11;
       public static final int canCoderID = 13;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(315.61);
+      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(315.43);
       public static final SwerveModuleConstants constants =
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
     }
@@ -196,20 +196,20 @@ public final class Constants {
     public static final double kMaxOutput = 1; 
     public static final double kMinOutput = -1;
 
-    public static final double onVelocity = 5000; 
+    public static final double onVelocity = 5400; 
 
     //Sensor variables
-    public static final double sensorRange = 6; //Six inches
+    public static final double sensorRange = 4; //Six inches
   }
 
   public static final class Arm {
 
-    public static double intakePosition = 0.987;
+    public static double intakePosition = 0.781;
     //The shot that's directly against the Subwoofer
     public static double closeSpeakerPosition = 0.70;
     //The shot were the back fo our robot is against the line
     public static double farSpeakerPosition = 0.75;
-    public static double AmpPosition = 0.288; // 0.074;
+    public static double AmpPosition = 0.114; // 0.074;
 
     // PID coefficients
     public static final double kP_Arm = 1e-4; 
